@@ -126,6 +126,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	}
 	.status-text { display: flex; align-items: center; gap: 12px; font-size: 17px; }
 	.status .btn { padding: 14px 24px; }
+	/* Phones: the button sits on its own row, centered under the status line. */
+	@media (max-width: 600px) {
+		.status { display: flex; flex-direction: column; align-items: flex-start; }
+		.status .btn { align-self: center; }
+	}
 	.pulse { width: 10px; height: 10px; flex: none; border-radius: 50%; background: var(--teal); box-shadow: 0 0 12px var(--teal); }
 
 	.steps {
