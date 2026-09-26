@@ -70,7 +70,7 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 	.hero-mark {
 		position: absolute;
 		top: 76px;
-		right: clamp(0px, 13vw, 200px);
+		right: calc(var(--gutter) - var(--edge) + clamp(0px, 13vw, 200px));
 		height: clamp(380px, 48vw, 600px);
 		opacity: 0.95;
 		filter: drop-shadow(0 0 40px rgba(232, 137, 43, 0.55)) drop-shadow(0 0 2px rgba(246, 184, 119, 0.6));

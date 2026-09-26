@@ -12,7 +12,10 @@
 	--line: rgba(244, 230, 207, 0.15);
 	--line-soft: rgba(244, 230, 207, 0.12);
 	--amber-line: rgba(232, 137, 43, 0.35);
-	--gutter: clamp(20px, 5vw, 56px);
+	/* Page side padding. Past 1200px of content (about GitHub's width) it grows, so wide screens get margins. */
+	--edge: clamp(20px, 5vw, 56px);
+	--content: 1200px;
+	--gutter: max(var(--edge), (100% - var(--content)) / 2);
 	--serif: Gloock, Georgia, serif;
 	--sans: Figtree, system-ui, sans-serif;
 	--mono: 'JetBrains Mono', ui-monospace, monospace;
