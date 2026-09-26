@@ -215,6 +215,20 @@ const arrow = (points: string) =>
 	.slide .mono-label { margin-bottom: 14px; }
 	.slide h2 { font-size: clamp(38px, 4.4vw, 52px); line-height: 1.02; margin-bottom: 20px; color: var(--amber); }
 	.short { margin: 0 0 16px; color: var(--ink); font-size: 19px; line-height: 1.6; text-wrap: pretty; }
+	@media (max-width: 560px) {
+		/* Label, progress, slide and arrows fit one phone screen, and scrolling nearby snaps to it.
+		   65px is the phone header's height. */
+		:global(html) { scroll-snap-type: y proximity; }
+		.slider { scroll-snap-align: start; scroll-margin-top: 65px; padding-block: 20px 0; }
+		.slider .eyebrow { margin-bottom: 16px; }
+		.slide { gap: 16px; padding: 20px 0 16px; }
+		.slide-photo { aspect-ratio: 2 / 1; border-radius: 18px; }
+		.slide .mono-label { margin-bottom: 8px; }
+		.slide h2 { font-size: 32px; margin-bottom: 10px; }
+		.short { font-size: 16px; line-height: 1.5; margin-bottom: 8px; }
+		.slide .body { font-size: 15px; line-height: 1.55; }
+		.arrow { width: 44px; height: 44px; }
+	}
 
 	.dues { margin-top: 40px; }
 	.dues-head { max-width: 620px; margin-bottom: 40px; }
