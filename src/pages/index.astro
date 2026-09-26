@@ -102,7 +102,7 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 			grid-template-columns: none;
 			grid-auto-flow: column;
 			grid-auto-columns: min(80%, 320px);
-			gap: 16px;
+			gap: var(--edge); /* at least the side margin, so no sliver of the previous gift shows */
 			margin-inline: calc(-1 * var(--edge));
 			padding-inline: var(--edge);
 			scroll-padding-inline: var(--edge);
