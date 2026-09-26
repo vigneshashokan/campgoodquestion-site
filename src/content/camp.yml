@@ -1,0 +1,77 @@
+header:
+  eyebrow: Our camp
+  title: Steam, spice, and a circle of strangers.
+  intro: "Good Question is a Black Rock City theme camp built around three gifts. Each one is an invitation: slow down, lean in, and find out who's sitting next to you."
+rituals:
+  - name: The Tea Ceremony
+    when: I · DUSK
+    short: Steam climbs like a question mark. Sit, sip, and let the city slow down around you.
+    long: "Kick off your shoes, find a cushion, and take a cup from someone you haven't met yet. It's the quietest corner of a very loud city, and the best place to catch your breath."
+    image:
+  - name: The Connection Gift
+    when: II · NIGHT
+    short: Strangers, a few honest questions, and whatever the lantern light reveals.
+    long: "Our namesake ritual. We hand you a question and a stranger to ask it to. By the end, the stranger usually isn't one anymore."
+    image:
+  - name: Dosa Days
+    when: III · TUE & THU
+    short: The griddle hisses, the batter spreads thin as the horizon, and the line becomes a party.
+    long: Twice a week the dust smells like home cooking. Crisp, golden dosas, hot off the griddle, handed out to whoever wanders by hungry.
+    image:
+dues:
+  eyebrow: What your dues cover
+  title: "You bring the curiosity. We've got the rest."
+  intro: We build it together, run it together, and strike it together.
+  covered_note: Tap any line for the details.
+  not_covered_note: "Not covered by dues. Feel free to reach out and we'll help you plan for all of it."
+  covered:
+    - title: 2 hot meals a day
+      details: We provide breakfast and dinner with vegan options. We also have a fully stocked pantry with snacks for you to nibble around for when you have the craving during the day or have the midnight munchies.
+    - title: Alcohol
+      details: "Our camp has a bar, and we'll all want to drink at it whenever we want. You're welcome to bring your own extras."
+    - title: Water
+      details: "The camp provides drinking water and Gatorade for the entire week, but bring enough water for the drive and for maybe the first day until the tank arrives, but you won't haul water for the week. We also have stations for cleaning your utensils and washing your hands."
+    - title: Grey water removal
+      details: "Leave No Trace includes waste water: brushing teeth, showering, cooking. The camp has a large receptacle for all of it, and it gets pumped during the week."
+    - title: Electricity
+      details: "We can run power to your tent. Bring a power strip for lights, air mattress pumps, fans, and charging your phone (not that it'll work out there). We also have a separate common outlet for everyone in the camp to charge their eBikes."
+      note: It can NOT run actual air conditioners. Ask us about swamp coolers.
+    - title: WiFi
+      details: "Since last year, we have added Starlink WiFi to the list of things we offer. It's good enough to check your messages."
+    - title: Camp infrastructure
+      details: The living space in the camp is covered with shade structures to cover your tents, and the common area to cover the tables, decorations and more, for our own use and for our gift to the playa.
+    - title: Camp shower
+      details: "Available to every member, but are limited. We understand it's dusty out there but we can't provide water for the shower every day!"
+    - title: Camp build
+      details: "We don't expect everyone to be part of the camp build. We'd appreciate it if you can afford to come a bit early and help us build the camp. If it's not possible, don't sweat it!"
+    - title: Camp strike
+      details: We expect everyone to be part of the teardown. This is the hardest part of the entire week, as everything needs to be torn down in a couple of days. If you have to leave early, work with the leads to find where you can help.
+    - title: Our tea ceremony & connection gift
+      details: "The most fun part of camp: we get to BE Burning Man. Do it well and someone back in the default world will say they found this one awesome camp full of super nice people. If that doesn't excite you, this probably isn't your camp :)"
+    - title: A new community
+      details: "People you'll find at the next burn, and plenty of days in between."
+  not_covered:
+    - title: Burning Man tickets
+      details: "We don't provide the tickets to the Burning Man. If you are bringing in a vehicle, you should get a vehicle pass as well. The camp will have some tickets available but we will all work as a team to get tickets for anyone the allocation in the stewards sale doesn't support."
+      link_label: Ticket info
+      link_url: https://tickets.burningman.org/
+    - title: Your shelter
+      details: "Space is limited. We'll help people bunk together and share, but your tent or shiftpod is on you."
+    - title: Personal gear
+      details: "Camelbak, utensils, goggles, dust masks, lights, sunscreen and the like. We'll share packing lists so you know what you need."
+    - title: Your bike
+      details: "You WILL need one! And we suggest an eBike instead of a regular one. Driving isn't allowed and the city is too big to walk. If there's enough interest, we may set up another bulk order with playa bike repair (TBD)."
+    - title: Transportation
+      details: "We'll run a logistics chat to coordinate, and we may rent passenger vans so fewer people drive. It isn't part of base dues. Carpooling and the Burner Bus are options too."
+    - title: Moving your personal items
+      details: "The camp may be able to carry some shelters or bikes, but there's NO GUARANTEE. Getting everything of yours TO AND FROM the playa is on you."
+    - title: Hauling camp trash off the playa
+      details: Everyone helps take all waste off the playa.
+    - title: Someone doing your teardown
+      details: Everyone supports some part of teardown. If you have to leave early, work with the leads to find where you can help.
+    - title: Power for AC or other big cooling
+      details: "If you bring an air conditioner, you'll need to supply the power for it too."
+    - title: Water & food to and from the playa
+      details: Bring a 7-gallon container for yourself to get to camp and last until the tank arrives.
+    - title: Someone pulling your weight
+      details: Camp only works if everyone pitches in.

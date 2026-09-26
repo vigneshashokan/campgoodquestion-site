@@ -1,13 +1,117 @@
 ---
-import { getEntry, render } from 'astro:content';
+import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import BrcMap from '../components/BrcMap.astro';
+import { placeYears } from '../lib/brc';
 
-const page = await getEntry('pages', 'home');
-if (!page) throw new Error('Missing src/content/pages/home.md');
-const { Content } = await render(page);
+const home = (await getEntry('home', 'home'))!.data;
+const camp = (await getEntry('camp', 'camp'))!.data;
+const history = (await getEntry('history', 'history'))!.data;
+
+const placed = placeYears(history.years).filter((y) => y.pos);
+const pins = placed.map((y) => ({ ...y.pos!, color: y.accent, label: y.mapLabel, labelAt: y.map_label }));
+const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]));
 ---
 
-<Base title={page.data.title} description={page.data.description}>
-	<h1>{page.data.title}</h1>
-	<Content />
+<Base description={home.hero.intro}>
+	<section class="hero">
+		<img src="/qmark.png" alt="" class="hero-mark" />
+		<div class="hero-copy">
+			<div class="eyebrow">{home.hero.eyebrow}</div>
+			<h1>{home.hero.title}</h1>
+			<p class="lede">{home.hero.intro}</p>
+		</div>
+	</section>
+
+	<section class="rituals">
+		<div class="eyebrow">{home.rituals.eyebrow}</div>
+		<h2 class="h2">{home.rituals.title}</h2>
+		<div class="ritual-grid">
+			{
+				camp.rituals.map((r) => (
+					<article class="ritual">
+						<div class="photo arch">{r.image && <img src={r.image} alt={r.name} loading="lazy" />}</div>
+						<div>
+							<div class="mono-label">{r.when}</div>
+							<h3>{r.name}</h3>
+							<p>{r.short}</p>
+						</div>
+					</article>
+				))
+			}
+		</div>
+		<div class="more"><a href="/camp/" class="link-arrow">More about each ritual →</a></div>
+	</section>
+
+	<section class="where">
+		<div class="eyebrow">{home.map.eyebrow}</div>
+		<h2 class="h2">{home.map.title}</h2>
+		<BrcMap pins={pins} rings={rings} />
+		<a href="/history/" class="link-arrow">Read our story →</a>
+	</section>
+
+	<section class="panel cta">
+		<div>
+			<div class="eyebrow">{home.join_cta.eyebrow}</div>
+			<h2>{home.join_cta.title}</h2>
+		</div>
+		<a href="/join/" class="btn">How to join →</a>
+	</section>
 </Base>
+
+<style>
+	.hero {
+		position: relative;
+		padding: 40px var(--gutter) clamp(80px, 10vw, 120px);
+		overflow: hidden;
+		background: radial-gradient(circle at 72% 42%, rgba(232, 137, 43, 0.45), rgba(210, 86, 30, 0.18) 28%, transparent 55%);
+	}
+	.hero-mark {
+		position: absolute;
+		top: 76px;
+		right: clamp(0px, 13vw, 200px);
+		height: clamp(380px, 48vw, 600px);
+		opacity: 0.95;
+		filter: drop-shadow(0 0 40px rgba(232, 137, 43, 0.55)) drop-shadow(0 0 2px rgba(246, 184, 119, 0.6));
+	}
+	.hero-copy { position: relative; max-width: 640px; padding-top: clamp(40px, 9vw, 120px); }
+	.hero h1 { font-size: clamp(52px, 7vw, 88px); line-height: 0.98; margin-bottom: 30px; text-wrap: balance; }
+	.hero .lede { max-width: 520px; }
+	/* On narrow screens the mark sits behind the text instead of beside it. */
+	@media (max-width: 860px) {
+		.hero-mark { right: -40px; opacity: 0.25; }
+	}
+
+	.rituals { padding: clamp(72px, 9vw, 100px) var(--gutter) 40px; border-top: 1px solid var(--line-soft); }
+	.rituals .eyebrow { margin-bottom: 20px; }
+	.ritual-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 32px;
+		margin-top: 48px;
+	}
+	.ritual { display: flex; flex-direction: column; gap: 22px; }
+	.arch { aspect-ratio: 4 / 5; border-radius: 999px 999px 18px 18px; }
+	.ritual .mono-label { margin-bottom: 12px; }
+	.ritual h3 { font-size: 34px; margin-bottom: 10px; color: var(--amber); }
+	.ritual p { margin: 0; color: var(--ink-2); line-height: 1.6; font-size: 16px; text-wrap: pretty; }
+	.more { display: flex; justify-content: center; margin-top: 56px; }
+
+	.where { padding: clamp(80px, 10vw, 110px) var(--gutter) 40px; text-align: center; }
+	.where .eyebrow { margin-bottom: 20px; }
+	.where .h2 { max-width: 820px; margin: 0 auto 24px; text-wrap: balance; }
+	.where .link-arrow { margin-top: 16px; }
+
+	.cta {
+		margin-top: 60px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 32px;
+	}
+	.cta > div { max-width: 620px; }
+	.cta .eyebrow { margin-bottom: 18px; }
+	.cta h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
+	.cta .btn { flex: none; }
+</style>

@@ -2,7 +2,32 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Thanks!">
-	<h1>Thanks!</h1>
-	<p>We got your message. <a href="/">Back to home</a></p>
+<Base title="Thanks">
+	<section class="thanks">
+		<div class="card">
+			<span class="label">RECEIVED</span>
+			<h1>Good question.</h1>
+			<p>We'll write back soon.</p>
+			<a href="/contact/">Ask another</a>
+		</div>
+	</section>
 </Base>
+
+<style>
+	.thanks { padding: clamp(64px, 9vw, 110px) var(--gutter); }
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		max-width: 520px;
+		margin: 0 auto;
+		padding: 32px;
+		border-radius: 24px;
+		background: var(--amber);
+		color: var(--bg);
+	}
+	.label { font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; }
+	h1 { font-size: 36px; line-height: 1.1; }
+	p { margin: 0; font-size: 18px; line-height: 1.6; }
+	a { align-self: flex-start; color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+</style>

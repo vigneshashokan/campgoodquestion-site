@@ -1,0 +1,243 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const camp = (await getEntry('camp', 'camp'))!.data;
+const settings = (await getEntry('settings', 'settings'))!.data;
+const { header, rituals, dues } = camp;
+
+const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const duesTabs = [
+	{ id: 'in', label: "What's covered", note: dues.covered_note, items: dues.covered, mark: '✦' },
+	{ id: 'out', label: "What's on you", note: dues.not_covered_note, items: dues.not_covered, mark: '○' },
+];
+const arrow = (points: string) =>
+	`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="${points}"></polyline></svg>`;
+---
+
+<Base title="Our Camp" description={header.intro}>
+	<PageHeader eyebrow={header.eyebrow} title={header.title}>
+		<p class="lede">{header.intro}</p>
+	</PageHeader>
+
+	<section class="slider" data-slider data-seconds={settings.slide_seconds} aria-roledescription="carousel" aria-label="Our rituals">
+		<div class="slider-nav">
+			<button class="icon-btn arrow" data-prev aria-label="Previous ritual" set:html={arrow('10,3 5,8 10,13')} />
+			<div class="slide-tabs" style={`--count: ${rituals.length}`}>
+				{
+					rituals.map((r, i) => (
+						<button class="slide-tab" data-go={i} aria-selected={i === 0 ? 'true' : 'false'}>
+							<span class="bar"><span class="fill" /></span>
+							<span class="tab-label">
+								<span class="mono-label">{roman[i] ?? i + 1}</span>
+								<span class="tab-name">{r.name}</span>
+							</span>
+						</button>
+					))
+				}
+			</div>
+			<button class="icon-btn arrow" data-next aria-label="Next ritual" set:html={arrow('6,3 11,8 6,13')} />
+		</div>
+		<div class="slides">
+			{
+				rituals.map((r, i) => (
+					<article class="slide" data-state={i === 0 ? 'current' : 'after'}>
+						<div class="photo slide-photo">{r.image && <img src={r.image} alt={r.name} loading="lazy" />}</div>
+						<div>
+							<div class="mono-label">{r.when}</div>
+							<h2>{r.name}</h2>
+							<p class="short">{r.short}</p>
+							<p class="body">{r.long}</p>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="panel dues" data-tabs>
+		<div class="dues-head">
+			<div class="eyebrow">{dues.eyebrow}</div>
+			<h2>{dues.title}</h2>
+			<p class="body">{dues.intro}</p>
+		</div>
+		<div class="dues-switch">
+			<div class="pills" role="tablist">
+				{
+					duesTabs.map((t, i) => (
+						<button class="pill" role="tab" data-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'}>
+							{t.label} <span class="count">{t.items.length}</span>
+						</button>
+					))
+				}
+			</div>
+		</div>
+		{
+			duesTabs.map((t, i) => (
+				<div data-panel={t.id} data-active={i === 0 ? '' : undefined} role="tabpanel">
+					<p class="dues-note">{t.note}</p>
+					<div class="dues-list">
+						{t.items.map((d) => (
+							<details name={`dues-${t.id}`} class={t.id}>
+								<summary>
+									<span class="mark" aria-hidden="true">{t.mark}</span>
+									<span class="dues-title">{d.title}</span>
+									<span class="sign" aria-hidden="true" />
+								</summary>
+								<div class="dues-detail">
+									<p>{d.details}</p>
+									{d.link_url && (
+										<p>
+											{d.link_label || 'More info'}:{' '}
+											<a href={d.link_url} target="_blank" rel="noopener noreferrer" class="inline-link">
+												{d.link_url.replace(/^https?:\/\//, '').replace(/\/$/, '')} ↗
+											</a>
+										</p>
+									)}
+									{d.note && <p class="notice">{d.note}</p>}
+								</div>
+							</details>
+						))}
+					</div>
+				</div>
+			))
+		}
+	</section>
+</Base>
+
+<script>
+	import '../scripts/tabs';
+
+	const root = document.querySelector<HTMLElement>('[data-slider]');
+	if (root) {
+		const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
+		const tabs = [...root.querySelectorAll<HTMLElement>('[data-go]')];
+		const fills = tabs.map((t) => t.querySelector<HTMLElement>('.fill')!);
+		const duration = Number(root.dataset.seconds) * 1000;
+		let current = 0;
+		let elapsed = 0;
+		let paused = false;
+
+		const render = () => {
+			slides.forEach((s, i) => (s.dataset.state = i < current ? 'before' : i === current ? 'current' : 'after'));
+			tabs.forEach((t, i) => {
+				t.setAttribute('aria-selected', String(i === current));
+				fills[i].style.width = `${i < current ? 100 : i === current ? (elapsed / duration) * 100 : 0}%`;
+			});
+		};
+		const go = (i: number) => {
+			current = (i + slides.length) % slides.length;
+			elapsed = 0;
+			render();
+		};
+
+		root.addEventListener('click', (e) => {
+			const b = (e.target as Element).closest<HTMLElement>('button');
+			if (!b) return;
+			if (b.dataset.go) go(Number(b.dataset.go));
+			else if ('prev' in b.dataset) go(current - 1);
+			else if ('next' in b.dataset) go(current + 1);
+		});
+		root.addEventListener('mouseenter', () => (paused = true));
+		root.addEventListener('mouseleave', () => (paused = false));
+		root.addEventListener('focusin', () => (paused = true));
+		root.addEventListener('focusout', () => (paused = false));
+
+		// Auto-advance, unless the visitor asked for less motion.
+		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			setInterval(() => {
+				if (paused || document.hidden) return;
+				elapsed += 50;
+				if (elapsed >= duration) go(current + 1);
+				else render();
+			}, 50);
+		}
+	}
+</script>
+
+<style>
+	.slider { padding: 0 var(--gutter) 40px; }
+	.slider-nav {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		border-top: 1px solid var(--line-soft);
+		padding-top: 24px;
+	}
+	.arrow { width: 48px; height: 48px; }
+	.arrow:active { transform: scale(0.94); }
+	.slide-tabs {
+		flex: 1;
+		min-width: 0;
+		display: grid;
+		grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+		gap: 12px;
+	}
+	.slide-tab {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 4px 0;
+		background: none;
+		border: none;
+		text-align: left;
+		cursor: pointer;
+	}
+	.bar { display: block; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+	.fill { display: block; height: 100%; width: 0; background: var(--amber); }
+	.tab-label { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+	.tab-name { font-size: 15px; font-weight: 600; color: var(--muted); transition: color 0.2s ease; }
+	.slide-tab[aria-selected='true'] .tab-name { color: var(--ink); }
+	/* Too narrow for three names side by side; the slide itself shows the name. */
+	@media (max-width: 560px) {
+		.tab-name { display: none; }
+	}
+
+	.slides { display: grid; overflow-x: clip; }
+	.slide {
+		grid-area: 1 / 1;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+		gap: clamp(32px, 5vw, 72px);
+		align-items: center;
+		padding: clamp(40px, 5vw, 56px) 0;
+		transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0.5s;
+	}
+	.slide[data-state='before'] { opacity: 0; visibility: hidden; transform: translateX(-24px); }
+	.slide[data-state='after'] { opacity: 0; visibility: hidden; transform: translateX(24px); }
+	.slide-photo { aspect-ratio: 5 / 4; border-radius: 24px; }
+	.slide .mono-label { margin-bottom: 14px; }
+	.slide h2 { font-size: clamp(38px, 4.4vw, 52px); line-height: 1.02; margin-bottom: 20px; color: var(--amber); }
+	.short { margin: 0 0 16px; color: var(--ink); font-size: 19px; line-height: 1.6; text-wrap: pretty; }
+
+	.dues { margin-top: 40px; }
+	.dues-head { max-width: 620px; margin-bottom: 40px; }
+	.dues-head .eyebrow { margin-bottom: 18px; }
+	.dues-head h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
+	.dues-head .body { margin-top: 20px; line-height: 1.6; }
+	.dues-switch { display: flex; justify-content: center; }
+	.count { font-family: var(--mono); font-size: 12px; opacity: 0.75; margin-left: 4px; }
+	.dues-note { margin: 14px 0 24px; text-align: center; color: var(--muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
+	.dues-list { max-width: 1080px; margin: 0 auto; border-top: 1px solid var(--line); }
+	details { border-bottom: 1px solid var(--line); }
+	summary {
+		display: flex;
+		gap: 14px;
+		align-items: baseline;
+		padding: 16px 0;
+		cursor: pointer;
+		list-style: none;
+	}
+	summary::-webkit-details-marker { display: none; }
+	.mark { flex: none; width: 12px; font-size: 12px; color: var(--amber); }
+	.out .mark { color: var(--muted); }
+	.dues-title { flex: 1; font-size: 17px; font-weight: 600; transition: color 0.2s ease; }
+	details[open] .dues-title { color: var(--amber); }
+	.sign { flex: none; font-family: var(--mono); font-size: 16px; color: var(--amber); }
+	.sign::after { content: '+'; }
+	details[open] .sign::after { content: '−'; }
+	.dues-detail { padding: 0 0 16px 26px; display: flex; flex-direction: column; gap: 10px; }
+	.dues-detail p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+	.dues-detail .notice { color: var(--ink); font-size: 15px; padding: 10px 14px; }
+</style>

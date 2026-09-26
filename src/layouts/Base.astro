@@ -1,37 +1,136 @@
 ---
+import { getEntry } from 'astro:content';
 import '../styles/global.css';
 
 interface Props {
-	title: string;
+	title?: string;
 	description?: string;
 }
 
 const { title, description } = Astro.props;
-const siteName = 'Camp Good Question';
+const siteName = 'Good Question';
+const settings = (await getEntry('settings', 'settings'))!.data;
+
+const nav = [
+	['/camp/', 'Our Camp'],
+	['/history/', 'History'],
+	['/about/', 'About Us'],
+	['/join/', 'Join Us'],
+	['/contact/', 'Contact'],
+];
+const path = Astro.url.pathname;
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<title>{title === siteName ? title : `${title} · ${siteName}`}</title>
+		<link rel="icon" type="image/png" href="/qmark.png" />
+		<title>{title ? `${title} · ${siteName}` : `${siteName} · Burning Man theme camp`}</title>
 		{description && <meta name="description" content={description} />}
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Gloock&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+			rel="stylesheet"
+		/>
 	</head>
 	<body>
-		<header>
-			<nav>
-				<a href="/">Home</a>
-				<a href="/about/">About</a>
-				<a href="/contact/">Contact</a>
+		<header class="site-header">
+			<a href="/" class="brand">
+				<span>Good Question</span>
+				<img src="/qmark.png" alt="" width="13" height="40" />
+			</a>
+			<nav aria-label="Main">
+				<ul class="links">
+					{
+						nav.map(([href, label]) => (
+							<li>
+								<a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>
+									{label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+				<div class="social">
+					<a href={settings.instagram_url} class="icon-btn" target="_blank" rel="noopener noreferrer" aria-label="Good Question on Instagram">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"
+							><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle
+								cx="17.4"
+								cy="6.6"
+								r="1.1"
+								fill="currentColor"
+								stroke="none"></circle></svg
+						>
+					</a>
+					<a href={settings.facebook_url} class="icon-btn" target="_blank" rel="noopener noreferrer" aria-label="Good Question on Facebook">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+							><path
+								d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z"
+							></path></svg
+						>
+					</a>
+				</div>
 			</nav>
 		</header>
 		<main>
 			<slot />
 		</main>
-		<footer>
-			<p>© {new Date().getFullYear()} {siteName}</p>
-		</footer>
+		<div class="bottom-space"></div>
 	</body>
 </html>
+
+<style>
+	.site-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px 32px;
+		padding: 22px var(--gutter);
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: rgba(27, 21, 18, 0.88);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid rgba(244, 230, 207, 0.08);
+	}
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex: none;
+		font-family: var(--serif);
+		font-size: 22px;
+		color: var(--amber);
+	}
+	.brand img { height: 40px; width: auto; filter: drop-shadow(0 0 8px rgba(232, 137, 43, 0.5)); }
+	nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 24px); font-size: 15px; }
+	.links {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px clamp(14px, 2vw, 28px);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.links a {
+		display: block;
+		white-space: nowrap;
+		color: var(--ink-2);
+		padding: 6px 0;
+		border-bottom: 1px solid transparent;
+		transition: color 0.2s ease;
+	}
+	.links a:hover { color: var(--ink); }
+	.links a[aria-current='page'] { color: var(--ink); border-bottom-color: var(--amber); }
+	.social {
+		display: flex;
+		gap: 10px;
+		padding-left: clamp(10px, 1.6vw, 20px);
+		border-left: 1px solid rgba(244, 230, 207, 0.15);
+	}
+	.bottom-space { height: 72px; }
+</style>

@@ -1,0 +1,103 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const about = (await getEntry('about', 'about'))!.data;
+const { header, principles } = about;
+---
+
+<Base title="About Us" description={header.paragraphs[0]}>
+	<PageHeader eyebrow={header.eyebrow} title={header.title}>
+		<div class="intro">
+			{header.paragraphs.map((p) => <p class="lede">{p}</p>)}
+		</div>
+	</PageHeader>
+
+	<section class="panel">
+		<div class="eyebrow">{about.values_title}</div>
+		<ul class="values">
+			{about.values.map((v) => <li>{v}</li>)}
+		</ul>
+	</section>
+
+	<section class="principles">
+		<div class="aside">
+			<div class="eyebrow">{principles.eyebrow}</div>
+			<h2>{principles.title}</h2>
+			<p class="body">
+				As a camper with Camp GQ, you agree to these behavior standards, in addition to celebrating the{' '}
+				<a href="https://burningman.org/culture/philosophical-center/10-principles/" target="_blank" rel="noopener noreferrer" class="inline-link"
+					>Burning Man 10 Principles ↗</a
+				>.
+			</p>
+			<p class="notice">{principles.warning}</p>
+		</div>
+		<ol class="list">
+			{
+				principles.items.map((p, i) => (
+					<li>
+						<span class="num">{String(i + 1).padStart(2, '0')}</span>
+						<div class="item">
+							<h3>{p.title}</h3>
+							{p.paragraphs.map((t) => <p class="body">{t}</p>)}
+							{!!p.list?.length && (
+								<ul class="stars">
+									{p.list.map((li) => <li>{li}</li>)}
+								</ul>
+							)}
+							{p.after_list?.map((t) => <p class="body">{t}</p>)}
+						</div>
+					</li>
+				))
+			}
+		</ol>
+	</section>
+</Base>
+
+<style>
+	.intro { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
+	.intro .lede { max-width: none; }
+
+	.values { display: flex; flex-wrap: wrap; gap: 12px 14px; margin: 0; padding: 0; list-style: none; }
+	.values li {
+		font-family: var(--serif);
+		font-size: clamp(24px, 2.6vw, 32px);
+		line-height: 1;
+		padding: 14px 22px;
+		border-radius: 999px;
+		border: 1px solid rgba(232, 137, 43, 0.45);
+	}
+
+	.principles {
+		padding: clamp(72px, 9vw, 100px) var(--gutter) 40px;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+		gap: 48px;
+		align-items: start;
+	}
+	.aside { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 20px; max-width: 420px; }
+	.aside .eyebrow { margin: 0; }
+	.aside h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
+	.aside .body { line-height: 1.6; }
+	.list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+	.list > li {
+		display: grid;
+		grid-template-columns: 56px minmax(0, 1fr);
+		gap: 0 16px;
+		padding: 32px 0;
+		border-bottom: 1px solid var(--line);
+	}
+	.num { font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; color: var(--amber); padding-top: 10px; }
+	.item { display: flex; flex-direction: column; gap: 14px; }
+	.item h3 { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; }
+	.item .body { text-align: justify; hyphens: auto; }
+	.stars { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 4px 0; list-style: none; }
+	.stars li { display: flex; gap: 14px; align-items: baseline; font-size: 17px; line-height: 1.5; }
+	.stars li::before { content: '✦'; flex: none; color: var(--amber); font-size: 12px; }
+
+	/* Stacked on phones the aside would cover the list, so let it scroll away. */
+	@media (max-width: 720px) {
+		.aside { position: static; }
+	}
+</style>
