@@ -123,6 +123,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	.step .mono-label { margin-bottom: 18px; }
 	.step h3 { font-size: 32px; margin-bottom: 12px; color: var(--amber); }
 	.step p { margin: 0; color: var(--ink-2); line-height: 1.6; font-size: 16px; text-wrap: pretty; }
+	/* Stacked on phones: keep the three steps close together so they read as one section. */
+	@media (max-width: 600px) {
+		.steps { padding-block: 32px; }
+		.step { padding: 14px 0; }
+		.step .mono-label { margin-bottom: 10px; }
+	}
 
 	.faq { padding: clamp(72px, 9vw, 100px) var(--gutter) 40px; }
 	.faq .eyebrow { margin-bottom: 20px; }
