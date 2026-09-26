@@ -8,6 +8,8 @@ const { header, steps, pitch_in, faq } = (await getEntry('join', 'join'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
 const open = settings.applications_open;
 const mailto = (subject: string) => `mailto:${settings.contact_email}?subject=${encodeURIComponent(subject)}`;
+// Opens the contact form with the "Notify Me" topic picked and the message filled in (see contact.astro).
+const notifyMe = `${url('/contact/')}?${new URLSearchParams({ topic: 'Notify Me', message: "I'm excited about Good Question. Please notify me when the application opens!" })}`;
 
 const faqSets = [
 	{ id: 'first', label: 'Playa virgin', items: faq.first_timers },
@@ -32,7 +34,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 							Applications open <strong>{settings.applications_open_when}</strong>.
 						</span>
 					</span>
-					<a href={mailto('Tell me when applications open')} class="btn">
+					<a href={notifyMe} class="btn">
 						Email me when it opens →
 					</a>
 				</div>

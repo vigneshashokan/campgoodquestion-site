@@ -5,11 +5,13 @@ interface Props {
 	/** Where the amber glow sits, e.g. "85% 20%" */
 	glow?: string;
 	center?: boolean;
+	/** Lets a long title run wider, so it wraps onto fewer lines */
+	wide?: boolean;
 }
-const { eyebrow, title, glow = '85% 20%', center = false } = Astro.props;
+const { eyebrow, title, glow = '85% 20%', center = false, wide = false } = Astro.props;
 ---
 
-<section class:list={['page-header', { center }]} style={`--glow: ${glow}`}>
+<section class:list={['page-header', { center, wide }]} style={`--glow: ${glow}`}>
 	<div class="eyebrow">{eyebrow}</div>
 	<h1 class="display">{title}</h1>
 	<slot />
@@ -21,6 +23,7 @@ const { eyebrow, title, glow = '85% 20%', center = false } = Astro.props;
 		background: radial-gradient(circle at var(--glow), rgba(232, 137, 43, 0.3), transparent 45%);
 	}
 	.display { max-width: 900px; }
+	.wide .display { max-width: 1000px; text-wrap: balance; }
 	.center { text-align: center; padding-bottom: 56px; background: radial-gradient(circle at var(--glow), rgba(232, 137, 43, 0.3), transparent 55%); }
 	.center .display, .center :global(.lede) { margin-left: auto; margin-right: auto; }
 	.center .display { max-width: 820px; }

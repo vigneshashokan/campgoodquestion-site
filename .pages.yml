@@ -62,7 +62,7 @@ content:
           - { name: title, label: Heading, type: string, required: true }
       - name: map
         label: Map section
-        description: Map pins come from the years on the History page.
+        description: Map pins come from the years on the About Us page.
         type: object
         fields:
           - { name: eyebrow, label: Small label, type: string, required: true }
@@ -125,10 +125,10 @@ content:
             list: true
             fields: *duesItem
 
-  - name: history
-    label: History
+  - name: about
+    label: About Us
     type: file
-    path: src/content/history.yml
+    path: src/content/about.yml
     format: yaml
     fields:
       - name: header
@@ -164,10 +164,10 @@ content:
               values: [below, left, right]
           - { name: photo, label: Photo, type: image }
 
-  - name: about
-    label: About Us
+  - name: our_code
+    label: Our Code
     type: file
-    path: src/content/about.yml
+    path: src/content/our-code.yml
     format: yaml
     fields:
       - name: header

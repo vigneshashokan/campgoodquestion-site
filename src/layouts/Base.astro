@@ -14,8 +14,8 @@ const settings = (await getEntry('settings', 'settings'))!.data;
 
 const nav = [
 	['/camp/', 'Our Camp'],
-	['/history/', 'History'],
 	['/about/', 'About Us'],
+	['/our-code/', 'Our Code'],
 	['/join/', 'Join Us'],
 	['/contact/', 'Contact'],
 ];
@@ -192,8 +192,9 @@ const path = Astro.url.pathname;
 		nav .links { flex-direction: column; align-items: flex-start; gap: 4px; }
 		nav .links a { font-family: var(--serif); font-size: 40px; padding: 4px 0; }
 		nav .links a[aria-current='page'] { color: var(--amber); border-bottom-color: transparent; }
-		nav .social { margin-top: 16px; padding-left: 0; border-left: 0; }
-		nav .social .icon-btn { width: 48px; height: 48px; }
+		nav .social { gap: 14px; margin-top: 16px; padding-left: 0; border-left: 0; }
+		nav .social .icon-btn { width: 60px; height: 60px; }
+		nav .social svg { width: 26px; height: 26px; }
 	}
 	body:has(nav:popover-open) { overflow: hidden; }
 
