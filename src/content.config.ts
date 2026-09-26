@@ -48,6 +48,7 @@ export const collections = {
 		'camp',
 		z.object({
 			header,
+			rituals_eyebrow: z.string(),
 			rituals: z
 				.array(
 					z.object({

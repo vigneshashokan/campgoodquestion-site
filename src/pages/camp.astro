@@ -6,7 +6,7 @@ import { url } from '../lib/url';
 
 const camp = (await getEntry('camp', 'camp'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
-const { header, rituals, dues } = camp;
+const { header, rituals_eyebrow, rituals, dues } = camp;
 
 const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 const duesTabs = [
@@ -23,8 +23,8 @@ const arrow = (points: string) =>
 	</PageHeader>
 
 	<section class="slider" data-slider data-seconds={settings.slide_seconds} aria-roledescription="carousel" aria-label="Our rituals">
+		<div class="eyebrow">{rituals_eyebrow}</div>
 		<div class="slider-nav">
-			<button class="icon-btn arrow" data-prev aria-label="Previous ritual" set:html={arrow('10,3 5,8 10,13')} />
 			<div class="slide-tabs" style={`--count: ${rituals.length}`}>
 				{
 					rituals.map((r, i) => (
@@ -38,22 +38,25 @@ const arrow = (points: string) =>
 					))
 				}
 			</div>
-			<button class="icon-btn arrow" data-next aria-label="Next ritual" set:html={arrow('6,3 11,8 6,13')} />
 		</div>
-		<div class="slides">
-			{
-				rituals.map((r, i) => (
-					<article class="slide" data-state={i === 0 ? 'current' : 'after'}>
-						<div class="photo slide-photo">{r.image && <img src={url(r.image)} alt={r.name} loading="lazy" />}</div>
-						<div>
-							<div class="mono-label">{r.when}</div>
-							<h2>{r.name}</h2>
-							<p class="short">{r.short}</p>
-							<p class="body">{r.long}</p>
-						</div>
-					</article>
-				))
-			}
+		<div class="stage">
+			<button class="icon-btn arrow" data-prev aria-label="Previous ritual" set:html={arrow('10,3 5,8 10,13')} />
+			<div class="slides">
+				{
+					rituals.map((r, i) => (
+						<article class="slide" data-state={i === 0 ? 'current' : 'after'}>
+							<div class="photo slide-photo">{r.image && <img src={url(r.image)} alt={r.name} loading="lazy" />}</div>
+							<div>
+								<div class="mono-label">{r.when}</div>
+								<h2>{r.name}</h2>
+								<p class="short">{r.short}</p>
+								<p class="body">{r.long}</p>
+							</div>
+						</article>
+					))
+				}
+			</div>
+			<button class="icon-btn arrow" data-next aria-label="Next ritual" set:html={arrow('6,3 11,8 6,13')} />
 		</div>
 	</section>
 
@@ -119,12 +122,13 @@ const arrow = (points: string) =>
 		let current = 0;
 		let elapsed = 0;
 		let paused = false;
+		let stopped = false; // once the visitor picks a slide, stop auto-advancing
 
 		const render = () => {
 			slides.forEach((s, i) => (s.dataset.state = i < current ? 'before' : i === current ? 'current' : 'after'));
 			tabs.forEach((t, i) => {
 				t.setAttribute('aria-selected', String(i === current));
-				fills[i].style.width = `${i < current ? 100 : i === current ? (elapsed / duration) * 100 : 0}%`;
+				fills[i].style.width = `${i < current ? 100 : i === current ? (stopped ? 100 : (elapsed / duration) * 100) : 0}%`;
 			});
 		};
 		const go = (i: number) => {
@@ -136,19 +140,19 @@ const arrow = (points: string) =>
 		root.addEventListener('click', (e) => {
 			const b = (e.target as Element).closest<HTMLElement>('button');
 			if (!b) return;
+			stopped = true;
 			if (b.dataset.go) go(Number(b.dataset.go));
 			else if ('prev' in b.dataset) go(current - 1);
 			else if ('next' in b.dataset) go(current + 1);
 		});
-		root.addEventListener('mouseenter', () => (paused = true));
-		root.addEventListener('mouseleave', () => (paused = false));
+		// Pause while keyboard users are on the controls. No hover pause: the slider fills the screen, so it looked frozen.
 		root.addEventListener('focusin', () => (paused = true));
 		root.addEventListener('focusout', () => (paused = false));
 
 		// Auto-advance, unless the visitor asked for less motion.
 		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
 			setInterval(() => {
-				if (paused || document.hidden) return;
+				if (stopped || paused || document.hidden) return;
 				elapsed += 50;
 				if (elapsed >= duration) go(current + 1);
 				else render();
@@ -159,13 +163,9 @@ const arrow = (points: string) =>
 
 <style>
 	.slider { padding: 0 var(--gutter) 40px; }
-	.slider-nav {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		border-top: 1px solid var(--line-soft);
-		padding-top: 24px;
-	}
+	.slider-nav { display: flex; align-items: center; gap: 16px; }
+	/* Arrows sit either side of the slide, vertically centered; on phones they drop below it as a pair. */
+	.stage { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(16px, 3vw, 40px); }
 	.arrow { width: 48px; height: 48px; }
 	.arrow:active { transform: scale(0.94); }
 	.slide-tabs {
@@ -193,6 +193,10 @@ const arrow = (points: string) =>
 	/* Too narrow for three names side by side; the slide itself shows the name. */
 	@media (max-width: 560px) {
 		.tab-name { display: none; }
+		.stage { grid-template-columns: 1fr 1fr; row-gap: 0; }
+		.slides { grid-row: 1; grid-column: 1 / -1; }
+		[data-prev] { justify-self: end; }
+		[data-next] { justify-self: start; }
 	}
 
 	.slides { display: grid; overflow-x: clip; }
