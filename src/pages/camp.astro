@@ -71,7 +71,7 @@ const arrow = (points: string) =>
 				{
 					duesTabs.map((t, i) => (
 						<button class="pill" role="tab" data-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'}>
-							{t.label} <span class="count">{t.items.length}</span>
+							{t.label}
 						</button>
 					))
 				}
@@ -112,6 +112,7 @@ const arrow = (points: string) =>
 
 <script>
 	import '../scripts/tabs';
+	import '../scripts/accordion';
 
 	const root = document.querySelector<HTMLElement>('[data-slider]');
 	if (root) {
@@ -215,6 +216,20 @@ const arrow = (points: string) =>
 	.slide .mono-label { margin-bottom: 14px; }
 	.slide h2 { font-size: clamp(38px, 4.4vw, 52px); line-height: 1.02; margin-bottom: 20px; color: var(--amber); }
 	.short { margin: 0 0 16px; color: var(--ink); font-size: 19px; line-height: 1.6; text-wrap: pretty; }
+	@media (max-width: 560px) {
+		/* Label, progress, slide and arrows fit one phone screen, and scrolling nearby snaps to it.
+		   65px is the phone header's height. */
+		:global(html) { scroll-snap-type: y proximity; }
+		.slider { scroll-snap-align: start; scroll-margin-top: 65px; padding-block: 20px 0; }
+		.slider .eyebrow { margin-bottom: 16px; }
+		.slide { gap: 16px; padding: 20px 0 16px; }
+		.slide-photo { aspect-ratio: 2 / 1; border-radius: 18px; }
+		.slide .mono-label { margin-bottom: 8px; }
+		.slide h2 { font-size: 32px; margin-bottom: 10px; }
+		.short { font-size: 16px; line-height: 1.5; margin-bottom: 8px; }
+		.slide .body { font-size: 15px; line-height: 1.55; }
+		.arrow { width: 44px; height: 44px; }
+	}
 
 	.dues { margin-top: 40px; }
 	.dues-head { max-width: 620px; margin-bottom: 40px; }
@@ -222,7 +237,12 @@ const arrow = (points: string) =>
 	.dues-head h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
 	.dues-head .body { margin-top: 20px; line-height: 1.6; }
 	.dues-switch { display: flex; justify-content: center; }
-	.count { font-family: var(--mono); font-size: 12px; opacity: 0.75; margin-left: 4px; }
+	/* Phones: a slimmer panel edge so both pills fit side by side across the full width. */
+	@media (max-width: 560px) {
+		.dues { padding-inline: 20px; }
+		.dues .pills { display: grid; width: 100%; }
+		.dues .pill { padding-inline: 10px; }
+	}
 	.dues-note { margin: 14px 0 24px; text-align: center; color: var(--muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
 	.dues-list { max-width: 1080px; margin: 0 auto; border-top: 1px solid var(--line); }
 	details { border-bottom: 1px solid var(--line); }
@@ -238,10 +258,11 @@ const arrow = (points: string) =>
 	.mark { flex: none; width: 12px; font-size: 12px; color: var(--amber); }
 	.out .mark { color: var(--muted); }
 	.dues-title { flex: 1; font-size: 17px; font-weight: 600; transition: color 0.2s ease; }
-	details[open] .dues-title { color: var(--amber); }
+	/* data-state='' marks an item that's animating shut, so it already looks closed. */
+	details[open]:not([data-state='']) .dues-title { color: var(--amber); }
 	.sign { flex: none; font-family: var(--mono); font-size: 16px; color: var(--amber); }
 	.sign::after { content: '+'; }
-	details[open] .sign::after { content: '−'; }
+	details[open]:not([data-state='']) .sign::after { content: '−'; }
 	.dues-detail { padding: 0 0 16px 26px; display: flex; flex-direction: column; gap: 10px; }
 	.dues-detail p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 	.dues-detail .notice { color: var(--ink); font-size: 15px; padding: 10px 14px; }
