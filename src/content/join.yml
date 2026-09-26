@@ -13,6 +13,16 @@ steps:
   - label: III · COMMUNICATE
     title: Be in the know
     text: We organize monthly camp meetings so that all members are up to date on every detail and are part of the planning process.
+pitch_in:
+  eyebrow: Build & strike
+  title: Many hands build it. All hands take it down.
+  items:
+    - label: BEFORE · IF YOU CAN
+      title: Camp build
+      text: "We don't expect everyone to be part of the camp build. We'd appreciate it if you can afford to come a bit early and help us build the camp. If it's not possible, don't sweat it!"
+    - label: AFTER · EVERYONE
+      title: Camp strike
+      text: We expect everyone to be part of the teardown. This is the hardest part of the entire week, as everything needs to be torn down in a couple of days. If you have to leave early, work with the leads to find where you can help.
 faq:
   eyebrow: Questions? Naturally!
   title: We can help with a few right away.

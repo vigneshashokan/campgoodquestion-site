@@ -3,7 +3,7 @@ import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 
-const { header, steps, faq } = (await getEntry('join', 'join'))!.data;
+const { header, steps, pitch_in, faq } = (await getEntry('join', 'join'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
 const open = settings.applications_open;
 const mailto = (subject: string) => `mailto:${settings.contact_email}?subject=${encodeURIComponent(subject)}`;
@@ -49,6 +49,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
 				</div>
 			))
 		}
+	</section>
+
+	<section class="pitch-in">
+		<div class="eyebrow">{pitch_in.eyebrow}</div>
+		<h2 class="h2">{pitch_in.title}</h2>
+		<div class="pitch-grid">
+			{
+				pitch_in.items.map((item) => (
+					<div class="pitch">
+						<div class="mono-label">{item.label}</div>
+						<h3>{item.title}</h3>
+						<p>{item.text}</p>
+					</div>
+				))
+			}
+		</div>
 	</section>
 
 	<section class="faq" data-tabs>
@@ -150,6 +166,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		.step { padding: 14px 0; }
 		.step .mono-label { margin-bottom: 10px; }
 	}
+
+	.pitch-in { padding: clamp(72px, 9vw, 100px) var(--gutter) 0; }
+	.pitch-in .eyebrow { margin-bottom: 20px; }
+	.pitch-in .h2 { margin-bottom: 32px; text-wrap: balance; }
+	.pitch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+	.pitch { padding: clamp(24px, 3vw, 32px); border-radius: 20px; border: 1px solid var(--line); background: var(--bg-2); }
+	.pitch .mono-label { margin-bottom: 12px; }
+	.pitch h3 { font-size: 28px; margin-bottom: 10px; color: var(--amber); }
+	.pitch p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 
 	.faq { padding: clamp(72px, 9vw, 100px) var(--gutter) 40px; }
 	.faq .eyebrow { margin-bottom: 20px; }
