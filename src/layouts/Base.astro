@@ -90,6 +90,15 @@ const path = Astro.url.pathname;
 			<slot />
 		</main>
 		<div class="bottom-space"></div>
+		<script>
+			// Fade the phone menu out before closing it. (Safari can't animate a popover's exit in CSS.)
+			const menu = document.getElementById('menu')!;
+			menu.querySelector('.menu-close')!.addEventListener('click', (e) => {
+				if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+				e.preventDefault(); // skip the button's instant close
+				menu.animate({ opacity: [1, 0] }, { duration: 200, easing: 'ease' }).onfinish = () => menu.hidePopover();
+			});
+		</script>
 	</body>
 </html>
 
@@ -171,6 +180,13 @@ const path = Astro.url.pathname;
 			flex-direction: column;
 			align-items: flex-start;
 			gap: 24px;
+		}
+		/* Opening fades the menu in and drops the links into place; closing is animated by the script above. */
+		nav:popover-open { transition: opacity 0.25s ease; }
+		nav:popover-open .links, nav:popover-open .social { transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+		@starting-style {
+			nav:popover-open { opacity: 0; }
+			nav:popover-open .links, nav:popover-open .social { transform: translateY(-16px); }
 		}
 		.menu-close { display: flex; align-self: flex-end; }
 		nav .links { flex-direction: column; align-items: flex-start; gap: 4px; }
