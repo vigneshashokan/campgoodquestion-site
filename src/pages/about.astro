@@ -73,6 +73,12 @@ const { header, principles } = about;
 		border-radius: 999px;
 		border: 1px solid rgba(232, 137, 43, 0.45);
 	}
+	/* Phones: smaller chips in a slimmer panel so several share a row and read as a cluster, not a list. */
+	@media (max-width: 560px) {
+		.panel:has(.values) { padding: 28px 20px; }
+		.values { gap: 8px; }
+		.values li { font-size: 19px; padding: 9px 15px; }
+	}
 
 	.principles {
 		padding: clamp(72px, 9vw, 100px) var(--gutter) 40px;
