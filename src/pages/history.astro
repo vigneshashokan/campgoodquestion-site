@@ -141,7 +141,13 @@ const rows = placeYears(years)
 		transform: rotate(var(--tilt));
 		transition: transform 0.3s ease;
 	}
-	.card:hover { transform: rotate(0deg) scale(1.03); }
+	/* The tilt straightens on hover; touch screens can't hover, so their cards start straight. */
+	@media (hover: hover) {
+		.card:hover { transform: rotate(0deg) scale(1.03); }
+	}
+	@media (hover: none) {
+		.card { transform: none; }
+	}
 	.card-inner {
 		display: block;
 		position: relative;
