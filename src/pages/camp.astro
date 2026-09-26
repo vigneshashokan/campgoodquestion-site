@@ -45,7 +45,7 @@ const arrow = (points: string) =>
 				{
 					rituals.map((r, i) => (
 						<article class="slide" data-state={i === 0 ? 'current' : 'after'}>
-							<div class="photo slide-photo">{r.image && <img src={url(r.image)} alt={r.name} loading="lazy" />}</div>
+							<div class="photo slide-photo">{(r.slide_image || r.image) && <img src={url((r.slide_image || r.image)!)} alt={r.name} loading="lazy" />}</div>
 							<div>
 								<div class="mono-label">{r.when}</div>
 								<h2>{r.name}</h2>

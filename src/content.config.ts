@@ -57,6 +57,7 @@ export const collections = {
 						short: z.string(),
 						long: z.string(),
 						image: optional,
+						slide_image: optional,
 					}),
 				)
 				.min(1),
@@ -122,7 +123,7 @@ export const collections = {
 				z.object({ label: z.string(), title: z.string(), text: z.string(), text_when_open: optional }),
 			),
 			pitch_in: section.extend({
-				items: z.array(z.object({ label: z.string(), title: z.string(), text: z.string() })),
+				items: z.array(z.object({ label: z.string(), title: z.string(), text: z.string(), image: optional })),
 			}),
 			faq: section.extend({
 				first_timers: z.array(z.object({ question: z.string(), answer: z.string() })),

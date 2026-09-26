@@ -99,6 +99,7 @@ content:
           - { name: short, label: Short description, type: text, required: true }
           - { name: long, label: Longer description (Our Camp page only), type: text, required: true }
           - { name: image, label: Photo, type: image }
+          - { name: slide_image, label: Our Camp photo, type: image, description: Optional. A different photo for the slideshow here; leave empty to use the one above. }
       - name: dues
         label: Dues section
         type: object
@@ -231,6 +232,7 @@ content:
               - { name: label, label: Small label, type: string, required: true, description: 'e.g. "BEFORE · IF YOU CAN"' }
               - { name: title, label: Title, type: string, required: true }
               - { name: text, label: Text, type: text, required: true }
+              - { name: image, label: Photo, type: image }
       - name: faq
         label: FAQ
         type: object
