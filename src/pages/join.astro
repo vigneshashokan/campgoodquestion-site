@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import { url } from '../lib/url';
 
 const { header, steps, pitch_in, faq } = (await getEntry('join', 'join'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
@@ -58,9 +59,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
 			{
 				pitch_in.items.map((item) => (
 					<div class="pitch">
-						<div class="mono-label">{item.label}</div>
-						<h3>{item.title}</h3>
-						<p>{item.text}</p>
+						{item.image && <div class="photo pitch-photo"><img src={url(item.image)} alt={item.title} loading="lazy" /></div>}
+						<div class="pitch-body">
+							<div class="mono-label">{item.label}</div>
+							<h3>{item.title}</h3>
+							<p>{item.text}</p>
+						</div>
 					</div>
 				))
 			}
@@ -171,7 +175,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	.pitch-in .eyebrow { margin-bottom: 20px; }
 	.pitch-in .h2 { margin-bottom: 32px; text-wrap: balance; }
 	.pitch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
-	.pitch { padding: clamp(24px, 3vw, 32px); border-radius: 20px; border: 1px solid var(--line); background: var(--bg-2); }
+	.pitch { overflow: hidden; border-radius: 20px; border: 1px solid var(--line); background: var(--bg-2); }
+	.pitch-photo { aspect-ratio: 3 / 2; border: 0; border-bottom: 1px solid var(--line); }
+	.pitch-body { padding: clamp(24px, 3vw, 32px); }
 	.pitch .mono-label { margin-bottom: 12px; }
 	.pitch h3 { font-size: 28px; margin-bottom: 10px; color: var(--amber); }
 	.pitch p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }

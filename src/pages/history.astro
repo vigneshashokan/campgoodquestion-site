@@ -34,7 +34,7 @@ const rows = placeYears(years)
 								<span class="face">
 									<span class="square">
 										{y.photo && <img src={url(y.photo)} alt={`Camp Good Question in ${y.year}`} loading="lazy" />}
-										{!y.placed && (
+										{!y.photo && !y.placed && (
 											<span class="future">
 												<img src={url('/qmark.png')} alt="" />
 											</span>
@@ -42,7 +42,6 @@ const rows = placeYears(years)
 									</span>
 									<span class="caption">
 										<span class="caption-big">{y.year}</span>
-										<span class="caption-addr">{y.addr}</span>
 									</span>
 								</span>
 								<span class="face back">
@@ -55,7 +54,6 @@ const rows = placeYears(years)
 									</span>
 									<span class="caption">
 										<span class="caption-big">On the playa</span>
-										<span class="caption-addr">{y.addr}</span>
 									</span>
 								</span>
 							</span>
@@ -178,13 +176,11 @@ const rows = placeYears(years)
 	.future img { height: 70%; width: auto; filter: drop-shadow(0 0 24px rgba(232, 137, 43, 0.6)); }
 	.caption {
 		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
+		justify-content: center;
 		padding: 16px 4px 20px;
 		color: #3a1410;
 	}
 	.caption-big { font-family: var(--serif); font-size: 30px; }
-	.caption-addr { font-family: var(--mono); font-size: 13px; color: #a8321e; }
 	.hint { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
 	.to-photo, .card[aria-pressed='true'] + .hint .to-map { display: none; }
 	.card[aria-pressed='true'] + .hint .to-photo { display: inline; }

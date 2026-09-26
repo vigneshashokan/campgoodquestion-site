@@ -19,9 +19,11 @@ pitch_in:
   items:
     - label: BEFORE · IF YOU CAN
       title: Camp build
+      image: /images/camp-build.jpg
       text: "We don't expect everyone to be part of the camp build. We'd appreciate it if you can afford to come a bit early and help us build the camp. If it's not possible, don't sweat it!"
     - label: AFTER · EVERYONE
       title: Camp strike
+      image: /images/camp-strike.jpg
       text: We expect everyone to be part of the teardown. This is the hardest part of the entire week, as everything needs to be torn down in a couple of days. If you have to leave early, work with the leads to find where you can help.
 faq:
   eyebrow: Questions? Naturally!
