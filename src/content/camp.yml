@@ -26,27 +26,23 @@ dues:
   covered_note: Tap any line for the details.
   not_covered_note: "Not covered by dues. Feel free to reach out and we'll help you plan for all of it."
   covered:
+    - title: Camp infrastructure
+      details: The living space in the camp is covered with shade structures to cover your tents, and the common area to cover the tables, decorations and more, for our own use and for our gift to the playa.
     - title: 2 hot meals a day
       details: We provide breakfast and dinner with vegan options. We also have a fully stocked pantry with snacks for you to nibble around for when you have the craving during the day or have the midnight munchies.
-    - title: Alcohol
-      details: "Our camp has a bar, and we'll all want to drink at it whenever we want. You're welcome to bring your own extras."
     - title: Water
       details: "The camp provides drinking water and Gatorade for the entire week, but bring enough water for the drive and for maybe the first day until the tank arrives, but you won't haul water for the week. We also have stations for cleaning your utensils and washing your hands."
-    - title: Grey water removal
-      details: "Leave No Trace includes waste water: brushing teeth, showering, cooking. The camp has a large receptacle for all of it, and it gets pumped during the week."
+    - title: Alcohol
+      details: "Our camp has a bar, and we'll all want to drink at it whenever we want. You're welcome to bring your own extras."
     - title: Electricity
       details: "We can run power to your tent. Bring a power strip for lights, air mattress pumps, fans, and charging your phone (not that it'll work out there). We also have a separate common outlet for everyone in the camp to charge their eBikes."
       note: It can NOT run actual air conditioners. Ask us about swamp coolers.
     - title: WiFi
       details: "Since last year, we have added Starlink WiFi to the list of things we offer. It's good enough to check your messages."
-    - title: Camp infrastructure
-      details: The living space in the camp is covered with shade structures to cover your tents, and the common area to cover the tables, decorations and more, for our own use and for our gift to the playa.
     - title: Camp shower
       details: "Available to every member, but are limited. We understand it's dusty out there but we can't provide water for the shower every day!"
-    - title: Camp build
-      details: "We don't expect everyone to be part of the camp build. We'd appreciate it if you can afford to come a bit early and help us build the camp. If it's not possible, don't sweat it!"
-    - title: Camp strike
-      details: We expect everyone to be part of the teardown. This is the hardest part of the entire week, as everything needs to be torn down in a couple of days. If you have to leave early, work with the leads to find where you can help.
+    - title: Grey water removal
+      details: "Leave No Trace includes waste water: brushing teeth, showering, cooking. The camp has a large receptacle for all of it, and it gets pumped during the week."
     - title: Our tea ceremony & connection gift
       details: "The most fun part of camp: we get to BE Burning Man. Do it well and someone back in the default world will say they found this one awesome camp full of super nice people. If that doesn't excite you, this probably isn't your camp :)"
     - title: A new community

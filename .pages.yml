@@ -217,6 +217,20 @@ content:
           - { name: title, label: Title, type: string, required: true }
           - { name: text, label: Text, type: text, required: true }
           - { name: text_when_open, label: Text while applications are open (optional), type: text }
+      - name: pitch_in
+        label: Build & strike
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+          - name: items
+            label: Cards
+            type: object
+            list: true
+            fields:
+              - { name: label, label: Small label, type: string, required: true, description: 'e.g. "BEFORE · IF YOU CAN"' }
+              - { name: title, label: Title, type: string, required: true }
+              - { name: text, label: Text, type: text, required: true }
       - name: faq
         label: FAQ
         type: object
