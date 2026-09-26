@@ -34,13 +34,13 @@ dues:
       details: "The camp provides drinking water and Gatorade for the entire week, but bring enough water for the drive and for maybe the first day until the tank arrives, but you won't haul water for the week. We also have stations for cleaning your utensils and washing your hands."
     - title: Alcohol
       details: "Our camp has a bar, and we'll all want to drink at it whenever we want. You're welcome to bring your own extras."
-    - title: Grey water removal
-      details: "Leave No Trace includes waste water: brushing teeth, showering, cooking. The camp has a large receptacle for all of it, and it gets pumped during the week."
     - title: Electricity
       details: "We can run power to your tent. Bring a power strip for lights, air mattress pumps, fans, and charging your phone (not that it'll work out there). We also have a separate common outlet for everyone in the camp to charge their eBikes."
       note: It can NOT run actual air conditioners. Ask us about swamp coolers.
     - title: WiFi
       details: "Since last year, we have added Starlink WiFi to the list of things we offer. It's good enough to check your messages."
+    - title: Grey water removal
+      details: "Leave No Trace includes waste water: brushing teeth, showering, cooking. The camp has a large receptacle for all of it, and it gets pumped during the week."
     - title: Camp shower
       details: "Available to every member, but are limited. We understand it's dusty out there but we can't provide water for the shower every day!"
     - title: Camp build
