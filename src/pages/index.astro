@@ -3,6 +3,7 @@ import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import BrcMap from '../components/BrcMap.astro';
 import { placeYears } from '../lib/brc';
+import { url } from '../lib/url';
 
 const home = (await getEntry('home', 'home'))!.data;
 const camp = (await getEntry('camp', 'camp'))!.data;
@@ -15,7 +16,7 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 
 <Base description={home.hero.intro}>
 	<section class="hero">
-		<img src="/qmark.png" alt="" class="hero-mark" />
+		<img src={url('/qmark.png')} alt="" class="hero-mark" />
 		<div class="hero-copy">
 			<div class="eyebrow">{home.hero.eyebrow}</div>
 			<h1>{home.hero.title}</h1>
@@ -30,7 +31,7 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 			{
 				camp.rituals.map((r) => (
 					<article class="ritual">
-						<div class="photo arch">{r.image && <img src={r.image} alt={r.name} loading="lazy" />}</div>
+						<div class="photo arch">{r.image && <img src={url(r.image)} alt={r.name} loading="lazy" />}</div>
 						<div>
 							<div class="mono-label">{r.when}</div>
 							<h3>{r.name}</h3>
@@ -40,14 +41,14 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 				))
 			}
 		</div>
-		<div class="more"><a href="/camp/" class="link-arrow">More about each ritual →</a></div>
+		<div class="more"><a href={url('/camp/')} class="link-arrow">More about each ritual →</a></div>
 	</section>
 
 	<section class="where">
 		<div class="eyebrow">{home.map.eyebrow}</div>
 		<h2 class="h2">{home.map.title}</h2>
 		<BrcMap pins={pins} rings={rings} />
-		<a href="/history/" class="link-arrow">Read our story →</a>
+		<a href={url('/history/')} class="link-arrow">Read our story →</a>
 	</section>
 
 	<section class="panel cta">
@@ -55,7 +56,7 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 			<div class="eyebrow">{home.join_cta.eyebrow}</div>
 			<h2>{home.join_cta.title}</h2>
 		</div>
-		<a href="/join/" class="btn">How to join →</a>
+		<a href={url('/join/')} class="btn">How to join →</a>
 	</section>
 </Base>
 
