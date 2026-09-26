@@ -26,6 +26,8 @@ dues:
   covered_note: Tap any line for the details.
   not_covered_note: "Not covered by dues. Feel free to reach out and we'll help you plan for all of it."
   covered:
+    - title: Camp infrastructure
+      details: The living space in the camp is covered with shade structures to cover your tents, and the common area to cover the tables, decorations and more, for our own use and for our gift to the playa.
     - title: 2 hot meals a day
       details: We provide breakfast and dinner with vegan options. We also have a fully stocked pantry with snacks for you to nibble around for when you have the craving during the day or have the midnight munchies.
     - title: Alcohol
@@ -39,8 +41,6 @@ dues:
       note: It can NOT run actual air conditioners. Ask us about swamp coolers.
     - title: WiFi
       details: "Since last year, we have added Starlink WiFi to the list of things we offer. It's good enough to check your messages."
-    - title: Camp infrastructure
-      details: The living space in the camp is covered with shade structures to cover your tents, and the common area to cover the tables, decorations and more, for our own use and for our gift to the playa.
     - title: Camp shower
       details: "Available to every member, but are limited. We understand it's dusty out there but we can't provide water for the shower every day!"
     - title: Camp build
