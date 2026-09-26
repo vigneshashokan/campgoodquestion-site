@@ -55,6 +55,11 @@ const { header, principles } = about;
 	</section>
 </Base>
 
+<script>
+	const aside = document.querySelector<HTMLElement>('.aside')!;
+	new ResizeObserver(() => aside.style.setProperty('--half', `${aside.offsetHeight / 2}px`)).observe(aside);
+</script>
+
 <style>
 	.intro { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
 	.intro .lede { max-width: none; }
@@ -76,7 +81,9 @@ const { header, principles } = about;
 		gap: 48px;
 		align-items: start;
 	}
-	.aside { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 20px; max-width: 420px; }
+	/* Sticks once vertically centered; --half (set by the script above) is half its height. Without JS it sticks near the top.
+	   Keep the explicit calc(): without it the CSS minifier collapses this to 120px. */
+	.aside { position: sticky; top: max(120px, calc(50vh - var(--half, 50vh))); display: flex; flex-direction: column; gap: 20px; max-width: 420px; }
 	.aside .eyebrow { margin: 0; }
 	.aside h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
 	.aside .body { line-height: 1.6; }
