@@ -1,0 +1,155 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const about = (await getEntry('our_code', 'our-code'))!.data;
+const { header, principles } = about;
+
+// Line icons for the camp values, matched by name. A value editors add later gets the spark.
+const valueIcons: Record<string, string> = {
+	inclusivity: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+	participation: '<path d="M18 11V6a2 2 0 0 0-4 0"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
+	discovery: '<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/>',
+	community: '<path d="M3.5 21 14 3"/><path d="M20.5 21 10 3"/><path d="M15.5 21 12 15l-3.5 6"/><path d="M2 21h20"/>',
+	growth: '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+	honesty: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/>',
+	nourishment: '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M6 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/>',
+	kindness: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/>',
+};
+const spark = '<path d="M12 3l1.9 5.8L20 12l-6.1 3.2L12 21l-1.9-5.8L4 12l6.1-3.2z"/>';
+---
+
+<Base title="Our Code" description={header.paragraphs[0]}>
+	<PageHeader eyebrow={header.eyebrow} title={header.title} wide>
+		<div class="intro">
+			{header.paragraphs.map((p) => <p class="lede">{p}</p>)}
+		</div>
+	</PageHeader>
+
+	<section class="panel">
+		<div class="eyebrow">{about.values_title}</div>
+		<ul class="values">
+			{
+				about.values.map((v) => (
+					<li>
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+							set:html={valueIcons[v.trim().toLowerCase()] ?? spark}
+						/>
+						{v}
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section class="principles">
+		<div class="aside">
+			<div class="eyebrow">{principles.eyebrow}</div>
+			<h2>{principles.title}</h2>
+			<p class="body">
+				As a camper with Camp GQ, you agree to these behavior standards, in addition to celebrating the{' '}
+				<a href="https://burningman.org/culture/philosophical-center/10-principles/" target="_blank" rel="noopener noreferrer" class="inline-link"
+					>Burning Man 10 Principles ↗</a
+				>.
+			</p>
+			<p class="notice">{principles.warning}</p>
+		</div>
+		<ol class="list">
+			{
+				principles.items.map((p, i) => (
+					<li>
+						<span class="num">{String(i + 1).padStart(2, '0')}</span>
+						<div class="item">
+							<h3>{p.title}</h3>
+							{p.paragraphs.map((t) => <p class="body">{t}</p>)}
+							{!!p.list?.length && (
+								<ul class="stars">
+									{p.list.map((li) => <li>{li}</li>)}
+								</ul>
+							)}
+							{p.after_list?.map((t) => <p class="body">{t}</p>)}
+						</div>
+					</li>
+				))
+			}
+		</ol>
+	</section>
+</Base>
+
+<script>
+	const aside = document.querySelector<HTMLElement>('.aside')!;
+	new ResizeObserver(() => aside.style.setProperty('--half', `${aside.offsetHeight / 2}px`)).observe(aside);
+</script>
+
+<style>
+	.intro { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
+	.intro .lede { max-width: none; }
+
+	.values { display: flex; flex-wrap: wrap; gap: 12px 14px; margin: 0; padding: 0; list-style: none; }
+	.values li {
+		font-family: var(--serif);
+		font-size: clamp(24px, 2.6vw, 32px);
+		line-height: 1;
+		padding: 14px 22px;
+		border-radius: 999px;
+		border: 1px solid rgba(232, 137, 43, 0.45);
+		display: flex;
+		align-items: center;
+		gap: 0.4em;
+	}
+	.values svg { flex: none; width: 0.8em; height: 0.8em; color: var(--amber); }
+	/* Phones: smaller chips in a slimmer panel so several share a row and read as a cluster, not a list. */
+	@media (max-width: 560px) {
+		.panel:has(.values) { padding: 28px 20px; }
+		.values { gap: 8px; }
+		.values li { font-size: 19px; padding: 9px 15px; }
+	}
+
+	.principles {
+		padding: clamp(72px, 9vw, 100px) var(--gutter) 40px;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+		gap: 48px;
+		align-items: start;
+	}
+	/* Sticks once vertically centered; --half (set by the script above) is half its height. Without JS it sticks near the top.
+	   Keep the explicit calc(): without it the CSS minifier collapses this to 120px. */
+	.aside { position: sticky; top: max(120px, calc(50vh - var(--half, 50vh))); display: flex; flex-direction: column; gap: 20px; max-width: 420px; }
+	.aside .eyebrow { margin: 0; }
+	.aside h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
+	.aside .body { line-height: 1.6; }
+	.list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+	.list > li {
+		display: grid;
+		grid-template-columns: 56px minmax(0, 1fr);
+		gap: 0 16px;
+		padding: 32px 0;
+		border-bottom: 1px solid var(--line);
+	}
+	.num { font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; color: var(--amber); padding-top: 10px; }
+	.item { display: flex; flex-direction: column; gap: 14px; }
+	.item h3 { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; }
+	.item .body { text-align: justify; hyphens: auto; }
+	.stars { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 4px 0; list-style: none; }
+	.stars li { display: flex; gap: 14px; align-items: baseline; font-size: 17px; line-height: 1.5; }
+	.stars li::before { content: '✦'; flex: none; color: var(--amber); font-size: 12px; }
+
+	/* Stacked on phones the aside would cover the list, so let it scroll away. */
+	@media (max-width: 720px) {
+		.aside { position: static; }
+	}
+	/* Phones: a narrow number column, and left-aligned text (justifying a narrow column opens big gaps between words). */
+	@media (max-width: 560px) {
+		.list > li { grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; }
+		.num { font-size: 12px; letter-spacing: 0.08em; padding-top: 9px; }
+		.item .body { text-align: left; hyphens: manual; }
+	}
+</style>

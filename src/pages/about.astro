@@ -2,154 +2,202 @@
 import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import BrcMap from '../components/BrcMap.astro';
+import { placeYears } from '../lib/brc';
+import { url } from '../lib/url';
 
-const about = (await getEntry('about', 'about'))!.data;
-const { header, principles } = about;
+const { header, years } = (await getEntry('about', 'about'))!.data;
 
-// Line icons for the camp values, matched by name. A value editors add later gets the spark.
-const valueIcons: Record<string, string> = {
-	inclusivity: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
-	participation: '<path d="M18 11V6a2 2 0 0 0-4 0"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
-	discovery: '<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/>',
-	community: '<path d="M3.5 21 14 3"/><path d="M20.5 21 10 3"/><path d="M15.5 21 12 15l-3.5 6"/><path d="M2 21h20"/>',
-	growth: '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
-	honesty: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/>',
-	nourishment: '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M6 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/>',
-	kindness: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/>',
-};
-const spark = '<path d="M12 3l1.9 5.8L20 12l-6.1 3.2L12 21l-1.9-5.8L4 12l6.1-3.2z"/>';
+const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const tilts = ['-1.5deg', '2.5deg', '-3deg', '2deg'];
+// Newest first, alternating sides.
+const rows = placeYears(years)
+	.map((y, i) => ({ ...y, chapter: `CHAPTER ${roman[i] ?? i + 1}` }))
+	.reverse()
+	.map((y, i) => ({ ...y, flipSide: i % 2 === 1, tilt: tilts[i % tilts.length] }));
 ---
 
-<Base title="About Us" description={header.paragraphs[0]}>
-	<PageHeader eyebrow={header.eyebrow} title={header.title}>
-		<div class="intro">
-			{header.paragraphs.map((p) => <p class="lede">{p}</p>)}
-		</div>
+<Base title="About Us" description={header.intro}>
+	<PageHeader eyebrow={header.eyebrow} title={header.title} glow="50% 0%" center>
+		<p class="lede">{header.intro}</p>
 	</PageHeader>
 
-	<section class="panel">
-		<div class="eyebrow">{about.values_title}</div>
-		<ul class="values">
-			{
-				about.values.map((v) => (
-					<li>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.8"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							aria-hidden="true"
-							set:html={valueIcons[v.trim().toLowerCase()] ?? spark}
-						/>
-						{v}
-					</li>
-				))
-			}
-		</ul>
-	</section>
-
-	<section class="principles">
-		<div class="aside">
-			<div class="eyebrow">{principles.eyebrow}</div>
-			<h2>{principles.title}</h2>
-			<p class="body">
-				As a camper with Camp GQ, you agree to these behavior standards, in addition to celebrating the{' '}
-				<a href="https://burningman.org/culture/philosophical-center/10-principles/" target="_blank" rel="noopener noreferrer" class="inline-link"
-					>Burning Man 10 Principles ↗</a
-				>.
-			</p>
-			<p class="notice">{principles.warning}</p>
-		</div>
-		<ol class="list">
-			{
-				principles.items.map((p, i) => (
-					<li>
-						<span class="num">{String(i + 1).padStart(2, '0')}</span>
-						<div class="item">
-							<h3>{p.title}</h3>
-							{p.paragraphs.map((t) => <p class="body">{t}</p>)}
-							{!!p.list?.length && (
-								<ul class="stars">
-									{p.list.map((li) => <li>{li}</li>)}
-								</ul>
-							)}
-							{p.after_list?.map((t) => <p class="body">{t}</p>)}
-						</div>
-					</li>
-				))
-			}
-		</ol>
+	<section class="timeline">
+		<div class="spine" aria-hidden="true"></div>
+		{
+			rows.map((y) => (
+				<div class:list={['year', { flip: y.flipSide }]} style={`--accent: ${y.accent}; --tilt: ${y.tilt}`}>
+					<div class="dot" aria-hidden="true" />
+					<div class="card-col">
+						<button type="button" class="card" aria-pressed="false" aria-label={`${y.year}: flip between photo and map`}>
+							<span class="card-inner">
+								<span class="face">
+									<span class="square">
+										{y.photo && <img src={url(y.photo)} alt={`Camp Good Question in ${y.year}`} loading="lazy" />}
+										{!y.photo && !y.placed && (
+											<span class="future">
+												<img src={url('/qmark.png')} alt="" />
+											</span>
+										)}
+									</span>
+									<span class="caption">
+										<span class="caption-big">{y.year}</span>
+									</span>
+								</span>
+								<span class="face back">
+									<span class="square map-bg">
+										<BrcMap
+											variant="square"
+											pins={y.pos ? [{ ...y.pos, color: y.accent, label: y.mapLabel }] : []}
+											emptyLabel={y.pos ? undefined : y.mapLabel}
+										/>
+									</span>
+									<span class="caption">
+										<span class="caption-big">On the playa</span>
+									</span>
+								</span>
+							</span>
+						</button>
+						<span class="hint" aria-hidden="true">
+							<span class="to-map">↻ tap to find us on the playa</span>
+							<span class="to-photo">↻ tap to see the photo</span>
+						</span>
+					</div>
+					<div class="text-col">
+						<div class="mono-label chapter">{y.chapter}</div>
+						<h2>{y.title}</h2>
+						<p class="body">{y.note}</p>
+					</div>
+				</div>
+			))
+		}
 	</section>
 </Base>
 
 <script>
-	const aside = document.querySelector<HTMLElement>('.aside')!;
-	new ResizeObserver(() => aside.style.setProperty('--half', `${aside.offsetHeight / 2}px`)).observe(aside);
+	document.querySelectorAll('.card').forEach((card) =>
+		card.addEventListener('click', () =>
+			card.setAttribute('aria-pressed', String(card.getAttribute('aria-pressed') !== 'true')),
+		),
+	);
 </script>
 
 <style>
-	.intro { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
-	.intro .lede { max-width: none; }
+	.timeline {
+		position: relative;
+		max-width: 1080px;
+		margin: 0 auto;
+		padding: 24px var(--edge) 40px;
+		display: flex;
+		flex-direction: column;
+		gap: clamp(56px, 8vw, 96px);
+	}
+	.spine {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: linear-gradient(180deg, transparent, rgba(232, 137, 43, 0.5) 8%, rgba(78, 156, 150, 0.5) 80%, transparent);
+	}
+	.year {
+		position: relative;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: clamp(40px, 8vw, 120px);
+	}
+	.year.flip { flex-direction: row-reverse; }
+	.dot {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 14px;
+		height: 14px;
+		margin: -7px 0 0 -7px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 0 6px var(--bg), 0 0 18px var(--accent);
+	}
 
-	.values { display: flex; flex-wrap: wrap; gap: 12px 14px; margin: 0; padding: 0; list-style: none; }
-	.values li {
-		font-family: var(--serif);
-		font-size: clamp(24px, 2.6vw, 32px);
-		line-height: 1;
-		padding: 14px 22px;
-		border-radius: 999px;
-		border: 1px solid rgba(232, 137, 43, 0.45);
+	.card-col {
+		flex: 0 1 340px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 18px;
+	}
+	.card {
+		display: block;
+		width: 100%;
+		padding: 0;
+		border: none;
+		background: none;
+		cursor: pointer;
+		perspective: 1400px;
+		transform: rotate(var(--tilt));
+		transition: transform 0.3s ease;
+	}
+	/* The tilt straightens on hover; touch screens can't hover, so their cards start straight. */
+	@media (hover: hover) {
+		.card:hover { transform: rotate(0deg) scale(1.03); }
+	}
+	@media (hover: none) {
+		.card { transform: none; }
+	}
+	.card-inner {
+		display: block;
+		position: relative;
+		transform-style: preserve-3d;
+		transition: transform 0.8s cubic-bezier(0.3, 0.7, 0.2, 1);
+	}
+	.card[aria-pressed='true'] .card-inner { transform: rotateY(180deg); }
+	.face {
+		display: block;
+		background: var(--ink);
+		padding: 14px 14px 0;
+		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+	}
+	.back { position: absolute; inset: 0; transform: rotateY(180deg); }
+	.square { display: block; position: relative; aspect-ratio: 1; background: var(--bg-2); overflow: hidden; }
+	.square > img { width: 100%; height: 100%; object-fit: cover; }
+	.map-bg { background: radial-gradient(circle at 50% 55%, var(--bg-3), var(--bg) 75%); }
+	.future {
+		position: absolute;
+		inset: 0;
 		display: flex;
 		align-items: center;
-		gap: 0.4em;
+		justify-content: center;
+		background: radial-gradient(circle at 50% 50%, rgba(232, 137, 43, 0.35), var(--bg-2) 70%);
 	}
-	.values svg { flex: none; width: 0.8em; height: 0.8em; color: var(--amber); }
-	/* Phones: smaller chips in a slimmer panel so several share a row and read as a cluster, not a list. */
-	@media (max-width: 560px) {
-		.panel:has(.values) { padding: 28px 20px; }
-		.values { gap: 8px; }
-		.values li { font-size: 19px; padding: 9px 15px; }
+	.future img { height: 70%; width: auto; filter: drop-shadow(0 0 24px rgba(232, 137, 43, 0.6)); }
+	.caption {
+		display: flex;
+		justify-content: center;
+		padding: 16px 4px 20px;
+		color: #3a1410;
 	}
+	.caption-big { font-family: var(--serif); font-size: 30px; }
+	.hint { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
+	.to-photo, .card[aria-pressed='true'] + .hint .to-map { display: none; }
+	.card[aria-pressed='true'] + .hint .to-photo { display: inline; }
 
-	.principles {
-		padding: clamp(72px, 9vw, 100px) var(--gutter) 40px;
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-		gap: 48px;
-		align-items: start;
-	}
-	/* Sticks once vertically centered; --half (set by the script above) is half its height. Without JS it sticks near the top.
-	   Keep the explicit calc(): without it the CSS minifier collapses this to 120px. */
-	.aside { position: sticky; top: max(120px, calc(50vh - var(--half, 50vh))); display: flex; flex-direction: column; gap: 20px; max-width: 420px; }
-	.aside .eyebrow { margin: 0; }
-	.aside h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
-	.aside .body { line-height: 1.6; }
-	.list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-	.list > li {
-		display: grid;
-		grid-template-columns: 56px minmax(0, 1fr);
-		gap: 0 16px;
-		padding: 32px 0;
-		border-bottom: 1px solid var(--line);
-	}
-	.num { font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; color: var(--amber); padding-top: 10px; }
-	.item { display: flex; flex-direction: column; gap: 14px; }
-	.item h3 { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; }
-	.item .body { text-align: justify; hyphens: auto; }
-	.stars { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 4px 0; list-style: none; }
-	.stars li { display: flex; gap: 14px; align-items: baseline; font-size: 17px; line-height: 1.5; }
-	.stars li::before { content: '✦'; flex: none; color: var(--amber); font-size: 12px; }
+	.text-col { flex: 0 1 340px; }
+	.year.flip .text-col { text-align: right; }
+	.chapter { color: var(--accent); margin-bottom: 14px; }
+	.text-col h2 { font-size: clamp(34px, 4vw, 48px); line-height: 1.02; margin-bottom: 16px; color: var(--amber); }
 
-	/* Stacked on phones the aside would cover the list, so let it scroll away. */
+	/* Stacked on phones: the spine moves to the left edge with each dot beside its chapter label,
+	   text stays left-aligned, and each chapter's text sits above its photo. */
 	@media (max-width: 720px) {
-		.aside { position: static; }
-	}
-	/* Phones: a narrow number column, and left-aligned text (justifying a narrow column opens big gaps between words). */
-	@media (max-width: 560px) {
-		.list > li { grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; }
-		.num { font-size: 12px; letter-spacing: 0.08em; padding-top: 9px; }
-		.item .body { text-align: left; hyphens: manual; }
+		.year { gap: 24px; justify-content: flex-start; padding-left: 30px; }
+		.text-col { order: -1; }
+		.spine { left: calc(var(--edge) + 7px); }
+		.dot { left: 0; top: 3px; margin: 0; }
+		.year.flip { flex-direction: row; }
+		.year.flip .text-col { text-align: left; }
 	}
 </style>

@@ -7,9 +7,9 @@ import { url } from '../lib/url';
 
 const home = (await getEntry('home', 'home'))!.data;
 const camp = (await getEntry('camp', 'camp'))!.data;
-const history = (await getEntry('history', 'history'))!.data;
+const about = (await getEntry('about', 'about'))!.data;
 
-const placed = placeYears(history.years).filter((y) => y.pos);
+const placed = placeYears(about.years).filter((y) => y.pos);
 const pins = placed.map((y) => ({ ...y.pos!, color: y.accent, label: y.mapLabel, labelAt: y.map_label }));
 const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]));
 ---
@@ -48,7 +48,7 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 		<div class="eyebrow">{home.map.eyebrow}</div>
 		<h2 class="h2">{home.map.title}</h2>
 		<BrcMap pins={pins} rings={rings} />
-		<a href={url('/history/')} class="link-arrow">Read our story →</a>
+		<a href={url('/about/')} class="link-arrow">Read our story →</a>
 	</section>
 
 	<section class="panel cta">

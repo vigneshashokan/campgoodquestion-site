@@ -70,8 +70,8 @@ export const collections = {
 			}),
 		}),
 	),
-	history: single(
-		'history',
+	about: single(
+		'about',
 		z.object({
 			header,
 			years: z.array(
@@ -96,8 +96,8 @@ export const collections = {
 			),
 		}),
 	),
-	about: single(
-		'about',
+	our_code: single(
+		'our-code',
 		z.object({
 			header: z.object({ eyebrow: z.string(), title: z.string(), paragraphs: z.array(z.string()) }),
 			values_title: z.string(),
