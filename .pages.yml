@@ -46,6 +46,11 @@ content:
     path: src/content/home.yml
     format: yaml
     fields:
+      - name: share_text
+        label: Link preview text
+        type: text
+        required: true
+        description: Shown under the site name when someone shares a link to the site.
       - name: hero
         label: Top of page
         type: object

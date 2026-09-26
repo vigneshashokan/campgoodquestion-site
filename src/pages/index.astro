@@ -14,7 +14,7 @@ const pins = placed.map((y) => ({ ...y.pos!, color: y.accent, label: y.mapLabel,
 const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]));
 ---
 
-<Base description={home.hero.intro}>
+<Base description={home.share_text}>
 	<section class="hero">
 		<img src={url('/qmark.png')} alt="" class="hero-mark" />
 		<div class="hero-copy">

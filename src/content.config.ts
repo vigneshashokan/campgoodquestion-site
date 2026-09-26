@@ -38,6 +38,7 @@ export const collections = {
 	home: single(
 		'home',
 		z.object({
+			share_text: z.string(),
 			hero: header,
 			rituals: section,
 			map: section,
