@@ -85,13 +85,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
 							</div>
 						))}
 					</div>
-					{/* Phones: the same questions as an accordion, each answer opening right under its question. */}
-					<div class="faq-list">
-						{set.items.map((q) => (
-							<details name={`faq-${set.id}`}>
+					{/* Phones: the questions as cards. The open one turns into the amber answer card; one is always open. */}
+					<div class="faq-list" data-always-open>
+						{set.items.map((q, j) => (
+							<details name={`faq-${set.id}`} open={j === 0}>
 								<summary>
+									<span class="faq-num">
+										{pad(j + 1)} / {pad(set.items.length)}
+									</span>
 									<span class="faq-q">{q.question}</span>
-									<span class="sign" aria-hidden="true" />
+									<span class="faq-arrow" aria-hidden="true">→</span>
 								</summary>
 								<p class="faq-a">{q.answer}</p>
 							</details>
@@ -193,40 +196,34 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	.answer h3 { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; }
 	.answer p { margin: 0; font-size: 18px; line-height: 1.6; text-wrap: pretty; }
 
-	/* Phones get the accordion instead of the question list + answer card. */
+	/* Phones get the question cards instead of the question list + answer card. */
 	.faq-list { display: none; }
 	@media (max-width: 760px) {
 		.questions, .answers { display: none; }
-		.faq-list { display: block; border-top: 1px solid var(--line); }
+		.faq-list { display: flex; flex-direction: column; gap: 10px; }
 	}
-	.faq-list details { border-bottom: 1px solid var(--line); }
+	.faq-list details {
+		border-radius: 18px;
+		border: 1px solid var(--line);
+		background: var(--bg-2);
+		transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+	}
 	.faq-list summary {
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-		gap: 16px;
-		padding: 16px 0;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: 6px 16px;
+		padding: 16px 20px;
 		cursor: pointer;
 		list-style: none;
-		font-family: var(--serif);
-		font-size: 20px;
-		line-height: 1.25;
-		transition: color 0.2s ease;
 	}
 	.faq-list summary::-webkit-details-marker { display: none; }
-	.sign { flex: none; font-family: var(--mono); font-size: 16px; color: var(--amber); }
-	.sign::after { content: '+'; }
-	/* data-state='' marks an item that's animating shut (see src/scripts/accordion.ts), so it already looks closed. */
-	.faq-list details[open]:not([data-state='']) summary { color: var(--amber); }
-	.faq-list details[open]:not([data-state='']) .sign::after { content: '−'; }
-	.faq-a {
-		margin: 0 0 16px;
-		padding: 16px 18px;
-		border-radius: 16px;
-		background: var(--amber);
-		color: var(--bg);
-		font-size: 16px;
-		line-height: 1.6;
-		text-wrap: pretty;
-	}
+	.faq-num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--muted); transition: color 0.3s ease; }
+	.faq-q { grid-column: 1; font-family: var(--serif); font-size: 20px; line-height: 1.25; }
+	.faq-arrow { grid-column: 2; grid-row: 1 / 3; font-family: var(--mono); font-size: 18px; color: var(--amber); transition: opacity 0.2s ease; }
+	.faq-a { margin: 0; padding: 0 20px 22px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+	/* The open card is the amber answer card. data-state='' marks one animating shut (src/scripts/accordion.ts), so it already looks closed. */
+	.faq-list details[open]:not([data-state='']) { background: var(--amber); border-color: var(--amber); color: var(--bg); }
+	.faq-list details[open]:not([data-state='']) .faq-num { color: var(--bg); }
+	.faq-list details[open]:not([data-state='']) .faq-arrow { opacity: 0; }
 </style>

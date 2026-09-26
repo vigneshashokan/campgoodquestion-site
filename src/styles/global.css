@@ -192,6 +192,8 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
 
 /* Panels switched by src/scripts/tabs.ts. .stacked panels cross-fade instead (see join.astro). */
 [data-panel]:not([data-active], .stacked) { display: none !important; }
+/* Room for the sticky header when an accordion item scrolls itself into view. */
+details { scroll-margin: 100px 0 16px; }
 /* A newly shown panel fades up into place. (.stacked panels have their own cross-fade.) */
 [data-panel][data-active]:not(.stacked) { animation: panel-in 0.35s ease; }
 @keyframes panel-in {
