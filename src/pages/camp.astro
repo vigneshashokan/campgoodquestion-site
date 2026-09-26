@@ -71,7 +71,7 @@ const arrow = (points: string) =>
 				{
 					duesTabs.map((t, i) => (
 						<button class="pill" role="tab" data-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'}>
-							{t.label} <span class="count">{t.items.length}</span>
+							{t.label}
 						</button>
 					))
 				}
@@ -236,7 +236,12 @@ const arrow = (points: string) =>
 	.dues-head h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
 	.dues-head .body { margin-top: 20px; line-height: 1.6; }
 	.dues-switch { display: flex; justify-content: center; }
-	.count { font-family: var(--mono); font-size: 12px; opacity: 0.75; margin-left: 4px; }
+	/* Phones: a slimmer panel edge so both pills fit side by side, splitting the width evenly. */
+	@media (max-width: 560px) {
+		.dues { padding-inline: 20px; }
+		.dues .pills { display: flex; flex-wrap: nowrap; width: 100%; }
+		.dues .pill { flex: 1; padding-inline: 10px; }
+	}
 	.dues-note { margin: 14px 0 24px; text-align: center; color: var(--muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
 	.dues-list { max-width: 1080px; margin: 0 auto; border-top: 1px solid var(--line); }
 	details { border-bottom: 1px solid var(--line); }
