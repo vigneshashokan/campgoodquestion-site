@@ -127,17 +127,31 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
 	text-align: center;
 }
 
-/* Segmented pill switcher (dues, FAQ) */
+/* Segmented two-option switcher (dues, FAQ): equal pills with one amber highlight that slides to the selected one.
+   ponytail: the slide assumes exactly two pills; a third needs its own translateX step. */
 .pills {
-	display: inline-flex;
-	flex-wrap: wrap;
+	position: relative;
+	display: inline-grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
 	gap: 4px;
 	padding: 4px;
 	max-width: 100%;
 	border-radius: 24px;
 	border: 1px solid var(--amber-line);
 }
+.pills::before {
+	content: '';
+	position: absolute;
+	inset: 4px auto 4px 4px;
+	width: calc((100% - 12px) / 2);
+	border-radius: 999px;
+	background: var(--amber);
+	transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.pills:has(.pill:last-child[aria-selected='true'])::before { transform: translateX(calc(100% + 4px)); }
 .pill {
+	position: relative;
 	cursor: pointer;
 	padding: 10px 18px;
 	border: none;
@@ -147,9 +161,9 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
 	font-size: 15px;
 	font-weight: 600;
 	white-space: nowrap;
-	transition: background 0.2s ease, color 0.2s ease;
+	transition: color 0.2s ease;
 }
-.pill[aria-selected='true'] { background: var(--amber); color: var(--bg); }
+.pill[aria-selected='true'] { color: var(--bg); }
 
 /* Round outline icon button (social links, slide arrows) */
 .icon-btn {
@@ -178,6 +192,11 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
 
 /* Panels switched by src/scripts/tabs.ts. .stacked panels cross-fade instead (see join.astro). */
 [data-panel]:not([data-active], .stacked) { display: none !important; }
+/* A newly shown panel fades up into place. (.stacked panels have their own cross-fade.) */
+[data-panel][data-active]:not(.stacked) { animation: panel-in 0.35s ease; }
+@keyframes panel-in {
+	from { opacity: 0; transform: translateY(8px); }
+}
 
 .visually-hidden {
 	position: absolute;

@@ -133,7 +133,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	.faq { padding: clamp(72px, 9vw, 100px) var(--gutter) 40px; }
 	.faq .eyebrow { margin-bottom: 20px; }
 	.faq .h2 { margin-bottom: 32px; }
-	.faq .pills { margin-bottom: 32px; }
+	.faq .pills { display: grid; width: fit-content; margin: 0 auto 32px; }
 	.faq-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
