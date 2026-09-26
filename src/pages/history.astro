@@ -194,8 +194,10 @@ const rows = placeYears(years)
 	.chapter { color: var(--accent); margin-bottom: 14px; }
 	.text-col h2 { font-size: clamp(34px, 4vw, 48px); line-height: 1.02; margin-bottom: 16px; color: var(--amber); }
 
-	/* Stacked on phones: drop the center spine and keep text left-aligned. */
+	/* Stacked on phones: drop the center spine, keep text left-aligned, and put each chapter's text above its photo. */
 	@media (max-width: 720px) {
+		.year { gap: 24px; }
+		.text-col { order: -1; }
 		.spine, .dot { display: none; }
 		.year.flip { flex-direction: row; }
 		.year.flip .text-col { text-align: left; }
