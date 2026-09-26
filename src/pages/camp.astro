@@ -113,6 +113,33 @@ const arrow = (points: string) =>
 <script>
 	import '../scripts/tabs';
 
+	// Dues items open and close smoothly (Safari can't animate <details> height in CSS yet).
+	// We take over the one-open-at-a-time job from the name attribute, which would snap the other item shut.
+	if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		const items = [...document.querySelectorAll<HTMLDetailsElement>('.dues details')];
+		const setOpen = (d: HTMLDetailsElement, open: boolean) => {
+			const from = d.offsetHeight; // mid-animation height if it's already moving
+			d.dataset.state = open ? 'open' : '';
+			d.getAnimations().forEach((a) => a.cancel());
+			d.open = true;
+			const to = open ? d.offsetHeight : d.querySelector('summary')!.offsetHeight;
+			d.animate(
+				{ height: [`${from}px`, `${to}px`], overflow: ['hidden', 'hidden'] },
+				{ duration: 300, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' },
+			).onfinish = () => (d.open = open);
+		};
+		items.forEach((d) => {
+			const group = (d.dataset.group = d.name);
+			d.removeAttribute('name');
+			d.querySelector('summary')!.addEventListener('click', (e) => {
+				e.preventDefault();
+				const opening = d.dataset.state !== 'open';
+				if (opening) items.forEach((o) => o !== d && o.dataset.state === 'open' && o.dataset.group === group && setOpen(o, false));
+				setOpen(d, opening);
+			});
+		});
+	}
+
 	const root = document.querySelector<HTMLElement>('[data-slider]');
 	if (root) {
 		const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
@@ -276,10 +303,11 @@ const arrow = (points: string) =>
 	.mark { flex: none; width: 12px; font-size: 12px; color: var(--amber); }
 	.out .mark { color: var(--muted); }
 	.dues-title { flex: 1; font-size: 17px; font-weight: 600; transition: color 0.2s ease; }
-	details[open] .dues-title { color: var(--amber); }
+	/* data-state='' marks an item that's animating shut, so it already looks closed. */
+	details[open]:not([data-state='']) .dues-title { color: var(--amber); }
 	.sign { flex: none; font-family: var(--mono); font-size: 16px; color: var(--amber); }
 	.sign::after { content: '+'; }
-	details[open] .sign::after { content: '−'; }
+	details[open]:not([data-state='']) .sign::after { content: '−'; }
 	.dues-detail { padding: 0 0 16px 26px; display: flex; flex-direction: column; gap: 10px; }
 	.dues-detail p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 	.dues-detail .notice { color: var(--ink); font-size: 15px; padding: 10px 14px; }
