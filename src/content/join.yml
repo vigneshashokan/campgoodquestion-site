@@ -1,0 +1,46 @@
+header:
+  eyebrow: Join us
+  title: Wanderers welcome!
+  intro: "You don't need answers to camp with us. You just need to be willing to ask, pour, and pitch in."
+steps:
+  - label: I · ASK
+    title: Reach out
+    text: "Applications open in early 2027. Feel free to join our mailing list and we'll send word the moment applications open."
+    text_when_open: "Send us an email to start your application. Tell us who you are and what you're curious about."
+  - label: II · HOLD
+    title: Camp dues
+    text: Camp dues are expected to be $600/person. There will be a $300 deposit due by April 1st to secure your spot in the camp with the rest by July.
+  - label: III · COMMUNICATE
+    title: Be in the know
+    text: We organize monthly camp meetings so that all members are up to date on every detail and are part of the planning process.
+faq:
+  eyebrow: Questions? Naturally!
+  title: We can help with a few right away.
+  first_timers:
+    - question: "I've never been. Is that okay?"
+      answer: "Every burner was a first-timer once. Just bring your questions, we have your back. It's literally our name."
+    - question: What do I actually need to bring?
+      answer: "Shelter, a bike, goggles, dust masks, a headlamp, sunscreen, layers for cold nights, and a water container. We'll share a full packing list well before the burn."
+    - question: How hot (and cold) does it get?
+      answer: Days can pass 100°F and nights can drop into the 40s. Dust storms roll in with little warning and the rain brings the mud Man alive. Pack for all of it.
+    - question: Is there money out there?
+      answer: "Burning Man runs on gifting system. Apart from ice and coffee at Center Camp (which is not for you to worry about), you won't need cash, so don't bring things to sell or trade!"
+    - question: "What does \"leave no trace\" mean?"
+      answer: Everything we bring in, we take back out, down to the last sequin. Nothing goes on the ground, including grey water.
+    - question: Where do I go to the bathroom?
+      answer: We are part of a hub (3 camps form a hub) which shares two Porta-potties amongst ourselves. Apart from this private one, there are public Porta-potties placed throughout the city and serviced during the week.
+    - question: Will my phone work?
+      answer: "Barely, if at all. Download maps and the event guide before you go, and plan meetup spots with friends. We do have a camp WiFi if you want to reach out to the outside world, but don't plan on streaming movies."
+    - question: What if I get overwhelmed?
+      answer: "It happens to everyone. Camp is your home base: come back, drink water, eat something, and find one of us. Rangers and medical are around the city too."
+  veterans:
+    - question: Will I be fed?
+      answer: "Two hot meals a day, plus Dosa Days every Tuesday and Thursday. Nobody goes hungry on our watch."
+    - question: Can I shower out there?
+      answer: Yes. We have a camp shower. Everyone pitches in in hauling the grey water away.
+    - question: Is there power?
+      answer: Camp electricity for charging, lighting, and keeping the kitchen running.
+    - question: "What's expected of me?"
+      answer: Pitch in. Everyone helps build, run, and strike the camp.
+    - question: How big is the camp?
+      answer: Somewhere between 20 and 50 curious humans. Small enough to know everyone by the end of the week.

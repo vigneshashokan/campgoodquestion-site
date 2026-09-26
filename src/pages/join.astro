@@ -1,0 +1,172 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const { header, steps, faq } = (await getEntry('join', 'join'))!.data;
+const settings = (await getEntry('settings', 'settings'))!.data;
+const open = settings.applications_open;
+const mailto = (subject: string) => `mailto:${settings.contact_email}?subject=${encodeURIComponent(subject)}`;
+
+const faqSets = [
+	{ id: 'first', label: 'Playa virgin', items: faq.first_timers },
+	{ id: 'vet', label: 'Veteran', items: faq.veterans },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base title="Join Us" description={header.intro}>
+	<PageHeader eyebrow={header.eyebrow} title={header.title} glow="80% 30%">
+		<p class="lede intro">{header.intro}</p>
+		{
+			open ? (
+				<a href={mailto(`Application for ${settings.applications_open_when}`)} class="btn apply">
+					Apply now →
+				</a>
+			) : (
+				<div class="status">
+					<span class="status-text">
+						<span class="pulse" aria-hidden="true" />
+						<span>
+							Applications open <strong>{settings.applications_open_when}</strong>.
+						</span>
+					</span>
+					<a href={mailto('Tell me when applications open')} class="btn">
+						Email me when it opens →
+					</a>
+				</div>
+			)
+		}
+	</PageHeader>
+
+	<section class="steps">
+		{
+			steps.map((s) => (
+				<div class="step">
+					<div class="mono-label">{s.label}</div>
+					<h3>{s.title}</h3>
+					<p>{open && s.text_when_open ? s.text_when_open : s.text}</p>
+				</div>
+			))
+		}
+	</section>
+
+	<section class="faq" data-tabs>
+		<div class="eyebrow">{faq.eyebrow}</div>
+		<h2 class="h2">{faq.title}</h2>
+		<div class="pills" role="tablist">
+			{
+				faqSets.map((set, i) => (
+					<button class="pill" role="tab" data-tab={set.id} aria-selected={i === 0 ? 'true' : 'false'}>
+						{set.label}
+					</button>
+				))
+			}
+		</div>
+		{
+			faqSets.map((set, i) => (
+				<div class="faq-grid" data-panel={set.id} data-active={i === 0 ? '' : undefined} data-tabs>
+					<div class="questions" role="tablist" aria-label={`${set.label} questions`}>
+						{set.items.map((q, j) => (
+							<button class="question" role="tab" data-tab={String(j)} aria-selected={j === 0 ? 'true' : 'false'}>
+								<span>{q.question}</span>
+								<span class="arrow" aria-hidden="true">→</span>
+							</button>
+						))}
+					</div>
+					<div class="answers">
+						{set.items.map((q, j) => (
+							<div class="answer stacked" role="tabpanel" data-panel={String(j)} data-active={j === 0 ? '' : undefined}>
+								<span class="answer-num">
+									{pad(j + 1)} / {pad(set.items.length)}
+								</span>
+								<h3>{q.question}</h3>
+								<p>{q.answer}</p>
+							</div>
+						))}
+					</div>
+				</div>
+			))
+		}
+	</section>
+</Base>
+
+<script>
+	import '../scripts/tabs';
+</script>
+
+<style>
+	.intro { margin-bottom: 40px; }
+	.apply { padding: 18px 32px; font-size: 17px; }
+	.status {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 16px 24px;
+		padding: 20px 24px;
+		border-radius: 20px;
+		border: 1px solid rgba(78, 156, 150, 0.5);
+		background: rgba(78, 156, 150, 0.08);
+	}
+	.status-text { display: flex; align-items: center; gap: 12px; font-size: 17px; }
+	.status .btn { padding: 14px 24px; }
+	.pulse { width: 10px; height: 10px; flex: none; border-radius: 50%; background: var(--teal); box-shadow: 0 0 12px var(--teal); }
+
+	.steps {
+		padding: 0 var(--gutter);
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		border-top: 1px solid var(--line-soft);
+		border-bottom: 1px solid var(--line-soft);
+	}
+	.step { padding: 48px 32px 48px 0; }
+	.step .mono-label { margin-bottom: 18px; }
+	.step h3 { font-size: 32px; margin-bottom: 12px; color: var(--amber); }
+	.step p { margin: 0; color: var(--ink-2); line-height: 1.6; font-size: 16px; text-wrap: pretty; }
+
+	.faq { padding: clamp(72px, 9vw, 100px) var(--gutter) 40px; }
+	.faq .eyebrow { margin-bottom: 20px; }
+	.faq .h2 { margin-bottom: 32px; }
+	.faq .pills { margin-bottom: 32px; }
+	.faq-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+		gap: 14px 48px;
+		align-items: start;
+	}
+	.questions { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+	.question {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+		padding: 18px 0;
+		border: none;
+		border-bottom: 1px solid var(--line);
+		background: none;
+		text-align: left;
+		cursor: pointer;
+		font-family: var(--serif);
+		font-size: 24px;
+		line-height: 1.2;
+		transition: color 0.2s ease;
+	}
+	.question:hover, .question[aria-selected='true'] { color: var(--amber); }
+	.arrow { flex: none; font-family: var(--mono); font-size: 18px; color: var(--amber); opacity: 0; transition: opacity 0.2s ease; }
+	.question[aria-selected='true'] .arrow { opacity: 1; }
+
+	.answers { position: sticky; top: 120px; display: grid; border-radius: 24px; background: var(--amber); color: var(--bg); }
+	.answer {
+		grid-area: 1 / 1;
+		padding: clamp(28px, 4vw, 44px);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0.3s;
+	}
+	/* Answers stay stacked in one cell so switching cross-fades instead of jumping. */
+	.answer:not([data-active]) { opacity: 0; visibility: hidden; transform: translateY(8px); }
+	.answer-num { font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; }
+	.answer h3 { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; }
+	.answer p { margin: 0; font-size: 18px; line-height: 1.6; text-wrap: pretty; }
+</style>

@@ -11,18 +11,23 @@ npm install
 npm run dev       # http://localhost:4321
 npm run build     # static output in dist/
 npm run preview   # serve the build
+npm run check     # type-check .astro/.ts files
+npm test          # unit tests (map geometry)
 ```
+
+The contact form only submits on Netlify. Locally it shows its "something went wrong" message, which is expected.
 
 ## Where things live
 
 | Path | What |
 |---|---|
-| `src/content/pages/*.md` | Page content (edited by non-technical folks via Pages CMS) |
-| `src/content.config.ts` | Content schema: what fields a page has |
+| `src/content/*.yml` | All site text, one file per page plus `settings.yml` (edited via Pages CMS) |
+| `src/content.config.ts` | Content schema: what fields each file has. A bad edit fails the build instead of breaking the site |
 | `.pages.yml` | Pages CMS editor config: keep in sync with the schema |
-| `src/layouts/Base.astro` | Shared `<head>`, header/nav, footer |
-| `src/pages/` | Routes. `[slug].astro` turns each content file into `/<name>/` |
-| `src/pages/contact.astro` | Contact form (Netlify Forms) |
+| `src/layouts/Base.astro` | Shared `<head>`, header/nav |
+| `src/pages/` | One route per page: home, camp, history, about, join, contact (+ thanks, 404) |
+| `src/components/BrcMap.astro`, `src/lib/brc.ts` | Black Rock City map; pins are computed from a year's address (e.g. 4:15 & E) |
+| `src/scripts/tabs.ts` | Tiny tab switcher used by the dues and FAQ sections |
 | `public/` | Static files served as-is. `public/images/` holds CMS uploads |
 
 ## One-time setup

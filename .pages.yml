@@ -1,22 +1,248 @@
-# Pages CMS config (https://pagescms.org/docs). Keep fields in sync with src/content.config.ts.
+# Pages CMS config (https://pagescms.org/docs). Each entry is one page's YAML file.
+# Keep fields in sync with src/content.config.ts: a mismatch fails the build (the live site stays as it was).
 media:
   input: public/images
   output: /images
+
 content:
-  - name: pages
-    label: Pages
-    type: collection
-    path: src/content/pages
-    view:
-      fields: [title]
+  - name: settings
+    label: Site settings
+    type: file
+    path: src/content/settings.yml
+    format: yaml
     fields:
-      - name: title
-        label: Title
+      - name: applications_open
+        label: Applications are open
+        type: boolean
+        description: Turn on to show the "Apply" button on the Join Us page.
+      - name: applications_open_when
+        label: When applications open
         type: string
         required: true
-      - name: description
-        label: Short description (shown in search results)
+        description: Shown on Join Us, e.g. "early 2027".
+      - name: contact_email
+        label: Camp email
         type: string
-      - name: body
-        label: Content
-        type: rich-text
+        required: true
+      - name: instagram_url
+        label: Instagram link
+        type: string
+        required: true
+      - name: facebook_url
+        label: Facebook link
+        type: string
+        required: true
+      - name: slide_seconds
+        label: Seconds per ritual slide (Our Camp page)
+        type: number
+        required: true
+        options:
+          min: 2
+          max: 12
+
+  - name: home
+    label: Home
+    type: file
+    path: src/content/home.yml
+    format: yaml
+    fields:
+      - name: hero
+        label: Top of page
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Headline, type: string, required: true }
+          - { name: intro, label: Intro, type: text, required: true }
+      - name: rituals
+        label: Rituals section
+        description: The ritual cards themselves are edited on the Our Camp page.
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+      - name: map
+        label: Map section
+        description: Map pins come from the years on the History page.
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+      - name: join_cta
+        label: Join box
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+
+  - name: camp
+    label: Our Camp
+    type: file
+    path: src/content/camp.yml
+    format: yaml
+    fields:
+      - name: header
+        label: Top of page
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Headline, type: string, required: true }
+          - { name: intro, label: Intro, type: text, required: true }
+      - name: rituals
+        label: Rituals
+        description: Shown as cards on Home and as a slideshow here.
+        type: object
+        list: { min: 1 }
+        fields:
+          - { name: name, label: Name, type: string, required: true }
+          - { name: when, label: When, type: string, required: true, description: 'e.g. "I · DUSK"' }
+          - { name: short, label: Short description, type: text, required: true }
+          - { name: long, label: Longer description (Our Camp page only), type: text, required: true }
+          - { name: image, label: Photo, type: image }
+      - name: dues
+        label: Dues section
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+          - { name: intro, label: Intro, type: text, required: true }
+          - { name: covered_note, label: Hint under "What's covered", type: string, required: true }
+          - { name: not_covered_note, label: Hint under "What's on you", type: string, required: true }
+          - name: covered
+            label: What's covered
+            type: object
+            list: true
+            fields: &duesItem
+              - { name: title, label: Title, type: string, required: true }
+              - { name: details, label: Details, type: text, required: true }
+              - { name: note, label: Warning note (optional), type: string }
+              - { name: link_label, label: Link label (optional), type: string }
+              - { name: link_url, label: Link URL (optional), type: string }
+          - name: not_covered
+            label: What's on you
+            type: object
+            list: true
+            fields: *duesItem
+
+  - name: history
+    label: History
+    type: file
+    path: src/content/history.yml
+    format: yaml
+    fields:
+      - name: header
+        label: Top of page
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Headline, type: string, required: true }
+          - { name: intro, label: Intro, type: text, required: true }
+      - name: years
+        label: Years
+        description: Order doesn't matter; the newest is shown first. The map pin is placed from the address.
+        type: object
+        list: true
+        fields:
+          - { name: year, label: Year, type: number, required: true }
+          - { name: title, label: Title, type: string, required: true }
+          - { name: note, label: Story, type: text, required: true }
+          - name: address_time
+            label: Address, clock time
+            type: string
+            description: 'e.g. "4:15". Leave blank (with the street) for a year where the location is still unknown.'
+          - name: address_street
+            label: Address, street letter
+            type: select
+            options:
+              values: [A, B, C, D, E, F, G, H, I, J, K, L]
+          - name: map_label
+            label: Home map label position
+            type: select
+            description: Move the label if it overlaps another year's on the home page map.
+            options:
+              values: [below, left, right]
+          - { name: photo, label: Photo, type: image }
+
+  - name: about
+    label: About Us
+    type: file
+    path: src/content/about.yml
+    format: yaml
+    fields:
+      - name: header
+        label: Top of page
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Headline, type: string, required: true }
+          - { name: paragraphs, label: Paragraphs, type: text, list: true }
+      - { name: values_title, label: Values heading, type: string, required: true }
+      - { name: values, label: Camp values, type: string, list: true }
+      - name: principles
+        label: Camp principles
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+          - { name: warning, label: Code of conduct warning, type: text, required: true }
+          - name: items
+            label: Principles
+            type: object
+            list: true
+            fields:
+              - { name: title, label: Title, type: string, required: true }
+              - { name: paragraphs, label: Paragraphs, type: text, list: true }
+              - { name: list, label: Bullet list (optional), type: string, list: true }
+              - { name: after_list, label: Paragraphs after the list (optional), type: text, list: true }
+
+  - name: join
+    label: Join Us
+    type: file
+    path: src/content/join.yml
+    format: yaml
+    fields:
+      - name: header
+        label: Top of page
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Headline, type: string, required: true }
+          - { name: intro, label: Intro, type: text, required: true }
+      - name: steps
+        label: Steps
+        type: object
+        list: true
+        fields:
+          - { name: label, label: Small label, type: string, required: true }
+          - { name: title, label: Title, type: string, required: true }
+          - { name: text, label: Text, type: text, required: true }
+          - { name: text_when_open, label: Text while applications are open (optional), type: text }
+      - name: faq
+        label: FAQ
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+          - name: first_timers
+            label: Playa virgin questions
+            type: object
+            list: true
+            fields: &qa
+              - { name: question, label: Question, type: string, required: true }
+              - { name: answer, label: Answer, type: text, required: true }
+          - name: veterans
+            label: Veteran questions
+            type: object
+            list: true
+            fields: *qa
+
+  - name: contact
+    label: Contact
+    type: file
+    path: src/content/contact.yml
+    format: yaml
+    fields:
+      - { name: eyebrow, label: Small label, type: string, required: true }
+      - { name: title, label: Headline, type: string, required: true }
+      - { name: subtitle, label: Subheading, type: string, required: true }
+      - { name: topics, label: Topic choices, type: string, list: true }
+      - { name: reply_note, label: Note next to the send button, type: string, required: true }
