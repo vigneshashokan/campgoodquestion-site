@@ -30,7 +30,18 @@ The contact form only submits on Netlify. Locally it shows its "something went w
 | `src/scripts/tabs.ts` | Tiny tab switcher used by the dues and FAQ sections |
 | `public/` | Static files served as-is. `public/images/` holds CMS uploads |
 
-## One-time setup
+## Hosting
+
+**Now (proof of concept): GitHub Pages** at https://vigneshashokan.github.io/campgoodquestion-site/.
+`.github/workflows/deploy.yml` builds and publishes on every push to `main`, including Pages CMS saves.
+The site lives under a subfolder there, so links and images go through `url()` in `src/lib/url.ts`.
+There's no form backend on GitHub Pages, so the contact form opens the visitor's email app, addressed to the camp email.
+
+**Later: Netlify.** Follow the setup below. No code changes are needed: builds on Netlify serve the site at `/`,
+and the contact form switches to Netlify Forms automatically (`NETLIFY` is set during Netlify builds).
+Then disable the GitHub Pages workflow.
+
+## One-time setup (Netlify)
 
 1. **GitHub**: push this repo.
 2. **Netlify**: *Add new site → Import from Git* → pick the repo. Build settings come from `netlify.toml`.

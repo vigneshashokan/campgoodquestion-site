@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import '../styles/global.css';
+import { url } from '../lib/url';
 
 interface Props {
 	title?: string;
@@ -25,7 +26,7 @@ const path = Astro.url.pathname;
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="icon" type="image/png" href="/qmark.png" />
+		<link rel="icon" type="image/png" href={url('/qmark.png')} />
 		<title>{title ? `${title} · ${siteName}` : `${siteName} · Burning Man theme camp`}</title>
 		{description && <meta name="description" content={description} />}
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,16 +38,16 @@ const path = Astro.url.pathname;
 	</head>
 	<body>
 		<header class="site-header">
-			<a href="/" class="brand">
+			<a href={url('/')} class="brand">
 				<span>Good Question</span>
-				<img src="/qmark.png" alt="" width="13" height="40" />
+				<img src={url('/qmark.png')} alt="" width="13" height="40" />
 			</a>
 			<nav aria-label="Main">
 				<ul class="links">
 					{
 						nav.map(([href, label]) => (
 							<li>
-								<a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>
+								<a href={url(href)} aria-current={path.startsWith(url(href)) ? 'page' : undefined}>
 									{label}
 								</a>
 							</li>

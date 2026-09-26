@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import { url } from '../lib/url';
 
 const camp = (await getEntry('camp', 'camp'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
@@ -43,7 +44,7 @@ const arrow = (points: string) =>
 			{
 				rituals.map((r, i) => (
 					<article class="slide" data-state={i === 0 ? 'current' : 'after'}>
-						<div class="photo slide-photo">{r.image && <img src={r.image} alt={r.name} loading="lazy" />}</div>
+						<div class="photo slide-photo">{r.image && <img src={url(r.image)} alt={r.name} loading="lazy" />}</div>
 						<div>
 							<div class="mono-label">{r.when}</div>
 							<h2>{r.name}</h2>

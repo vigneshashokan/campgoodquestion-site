@@ -1,11 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import { url } from '../lib/url';
 ---
 
 <Base title="Lost in the dust">
 	<PageHeader eyebrow="404" title="Lost in the dust." glow="50% 0%" center>
 		<p class="lede">That page wandered off. Head back to camp.</p>
-		<p><a href="/" class="link-arrow">Back to camp →</a></p>
+		<p><a href={url('/')} class="link-arrow">Back to camp →</a></p>
 	</PageHeader>
 </Base>

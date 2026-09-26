@@ -1,9 +1,17 @@
 ---
 import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
 
 const contact = (await getEntry('contact', 'contact'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
+
+// Netlify sets NETLIFY=true during its builds. Anywhere else (e.g. the GitHub Pages preview)
+// there's no form backend, so the form hands off to the visitor's email app instead.
+const onNetlify = !!process.env.NETLIFY;
+const formAttrs = onNetlify
+	? { method: 'POST', action: url('/thanks/'), 'data-netlify': 'true', 'netlify-honeypot': 'bot-field', 'data-mode': 'netlify' }
+	: { method: 'POST', action: `mailto:${settings.contact_email}`, enctype: 'text/plain', 'data-mode': 'email' };
 ---
 
 <Base title="Contact" description={contact.subtitle}>
@@ -13,10 +21,20 @@ const settings = (await getEntry('settings', 'settings'))!.data;
 			<h1 class="display">{contact.title}</h1>
 			<h2 class="subtitle">{contact.subtitle}</h2>
 
-			<!-- Netlify Forms: detected at deploy time; submissions land in the Netlify dashboard. -->
-			<form name="contact" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="bot-field" data-email={settings.contact_email}>
-				<input type="hidden" name="form-name" value="contact" />
-				<p hidden><label>Don't fill this out: <input name="bot-field" /></label></p>
+			<!-- On Netlify: Netlify Forms, detected at deploy time; submissions land in the Netlify dashboard. -->
+			<form name="contact" {...formAttrs} data-email={settings.contact_email}>
+				{
+					onNetlify && (
+						<>
+							<input type="hidden" name="form-name" value="contact" />
+							<p hidden>
+								<label>
+									Don't fill this out: <input name="bot-field" />
+								</label>
+							</p>
+						</>
+					)
+				}
 				<div class="row">
 					<label class="field">
 						<span class="mono-label">Your name</span>
@@ -88,6 +106,16 @@ const settings = (await getEntry('settings', 'settings'))!.data;
 		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) return fail('Add an email so we can write back.', email);
 		if (!message.value.trim()) return fail("Tell us what's on your mind.", message);
 
+		const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+		if (form.dataset.mode === 'email') {
+			const topic = form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.value;
+			const subject = `Good question${topic ? ` · ${topic}` : ''}${name ? ` from ${name}` : ''}`;
+			const body = `${message.value.trim()}\n\n${name || 'Sent from the website'} (${email.value.trim()})`;
+			location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+			form.querySelector('.reply-note')!.textContent = `Your email app should open with your message. If it doesn't, email us at ${form.dataset.email}.`;
+			return;
+		}
+
 		button.disabled = true;
 		try {
 			const body = new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString();
@@ -99,8 +127,7 @@ const settings = (await getEntry('settings', 'settings'))!.data;
 			button.disabled = false;
 		}
 
-		const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim().split(' ')[0];
-		sent.querySelector('[data-sent-name]')!.textContent = name || 'friend';
+		sent.querySelector('[data-sent-name]')!.textContent = name.split(' ')[0] || 'friend';
 		sent.querySelector('[data-sent-email]')!.textContent = email.value.trim();
 		form.hidden = true;
 		sent.hidden = false;
