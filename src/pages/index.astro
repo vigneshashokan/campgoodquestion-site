@@ -96,6 +96,22 @@ const rings = Object.fromEntries(placed.map((y) => [y.address_street!, y.accent]
 	.ritual .mono-label { margin-bottom: 12px; }
 	.ritual h3 { font-size: 34px; margin-bottom: 10px; color: var(--amber); }
 	.ritual p { margin: 0; color: var(--ink-2); line-height: 1.6; font-size: 16px; text-wrap: pretty; }
+	/* Phones: a swipeable row, edge to edge, with the next gift peeking in so it's clear there's more. */
+	@media (max-width: 720px) {
+		.ritual-grid {
+			grid-template-columns: none;
+			grid-auto-flow: column;
+			grid-auto-columns: min(80%, 320px);
+			gap: 16px;
+			margin-inline: calc(-1 * var(--edge));
+			padding-inline: var(--edge);
+			scroll-padding-inline: var(--edge);
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+		}
+		.ritual { scroll-snap-align: start; }
+	}
 	.more { display: flex; justify-content: center; margin-top: 56px; }
 
 	.where { padding: clamp(80px, 10vw, 110px) var(--gutter) 40px; text-align: center; }
