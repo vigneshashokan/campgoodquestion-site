@@ -87,6 +87,7 @@ content:
           - { name: eyebrow, label: Small label, type: string, required: true }
           - { name: title, label: Headline, type: string, required: true }
           - { name: intro, label: Intro, type: text, required: true }
+      - { name: rituals_eyebrow, label: Small label above the slideshow, type: string, required: true }
       - name: rituals
         label: Rituals
         description: Shown as cards on Home and as a slideshow here.
