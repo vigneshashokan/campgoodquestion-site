@@ -189,5 +189,5 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	*, *::before, *::after { transition-duration: 0.01ms !important; }
+	*, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }

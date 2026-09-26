@@ -236,11 +236,30 @@ const arrow = (points: string) =>
 	.dues-head h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
 	.dues-head .body { margin-top: 20px; line-height: 1.6; }
 	.dues-switch { display: flex; justify-content: center; }
-	/* Phones: a slimmer panel edge so both pills fit side by side, splitting the width evenly. */
+	/* Two equal pills with one amber highlight that slides to the selected one. */
+	.dues .pills { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+	.dues .pills::before {
+		content: '';
+		position: absolute;
+		inset: 4px auto 4px 4px;
+		width: calc((100% - 12px) / 2);
+		border-radius: 999px;
+		background: var(--amber);
+		transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	.dues .pills:has(.pill:last-child[aria-selected='true'])::before { transform: translateX(calc(100% + 4px)); }
+	.dues .pill { position: relative; }
+	.dues .pill[aria-selected='true'] { background: none; }
+	/* The newly shown list fades up into place. */
+	.dues [data-panel][data-active] { animation: dues-in 0.35s ease; }
+	@keyframes dues-in {
+		from { opacity: 0; transform: translateY(8px); }
+	}
+	/* Phones: a slimmer panel edge so both pills fit side by side across the full width. */
 	@media (max-width: 560px) {
 		.dues { padding-inline: 20px; }
-		.dues .pills { display: flex; flex-wrap: nowrap; width: 100%; }
-		.dues .pill { flex: 1; padding-inline: 10px; }
+		.dues .pills { display: grid; width: 100%; }
+		.dues .pill { padding-inline: 10px; }
 	}
 	.dues-note { margin: 14px 0 24px; text-align: center; color: var(--muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
 	.dues-list { max-width: 1080px; margin: 0 auto; border-top: 1px solid var(--line); }
