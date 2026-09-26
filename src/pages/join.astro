@@ -85,6 +85,18 @@ const pad = (n: number) => String(n).padStart(2, '0');
 							</div>
 						))}
 					</div>
+					{/* Phones: the same questions as an accordion, each answer opening right under its question. */}
+					<div class="faq-list">
+						{set.items.map((q) => (
+							<details name={`faq-${set.id}`}>
+								<summary>
+									<span class="faq-q">{q.question}</span>
+									<span class="sign" aria-hidden="true" />
+								</summary>
+								<p class="faq-a">{q.answer}</p>
+							</details>
+						))}
+					</div>
 				</div>
 			))
 		}
@@ -93,6 +105,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 <script>
 	import '../scripts/tabs';
+	import '../scripts/accordion';
 </script>
 
 <style>
@@ -157,7 +170,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		line-height: 1.2;
 		transition: color 0.2s ease;
 	}
-	.question:hover, .question[aria-selected='true'] { color: var(--amber); }
+	.question[aria-selected='true'] { color: var(--amber); }
+	/* Hover only with a mouse; on touch screens it would stick to the last question tapped. */
+	@media (hover: hover) {
+		.question:hover { color: var(--amber); }
+	}
 	.arrow { flex: none; font-family: var(--mono); font-size: 18px; color: var(--amber); opacity: 0; transition: opacity 0.2s ease; }
 	.question[aria-selected='true'] .arrow { opacity: 1; }
 
@@ -175,4 +192,41 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	.answer-num { font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; }
 	.answer h3 { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; }
 	.answer p { margin: 0; font-size: 18px; line-height: 1.6; text-wrap: pretty; }
+
+	/* Phones get the accordion instead of the question list + answer card. */
+	.faq-list { display: none; }
+	@media (max-width: 760px) {
+		.questions, .answers { display: none; }
+		.faq-list { display: block; border-top: 1px solid var(--line); }
+	}
+	.faq-list details { border-bottom: 1px solid var(--line); }
+	.faq-list summary {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 16px;
+		padding: 16px 0;
+		cursor: pointer;
+		list-style: none;
+		font-family: var(--serif);
+		font-size: 20px;
+		line-height: 1.25;
+		transition: color 0.2s ease;
+	}
+	.faq-list summary::-webkit-details-marker { display: none; }
+	.sign { flex: none; font-family: var(--mono); font-size: 16px; color: var(--amber); }
+	.sign::after { content: '+'; }
+	/* data-state='' marks an item that's animating shut (see src/scripts/accordion.ts), so it already looks closed. */
+	.faq-list details[open]:not([data-state='']) summary { color: var(--amber); }
+	.faq-list details[open]:not([data-state='']) .sign::after { content: '−'; }
+	.faq-a {
+		margin: 0 0 16px;
+		padding: 16px 18px;
+		border-radius: 16px;
+		background: rgba(232, 137, 43, 0.12);
+		color: var(--ink);
+		font-size: 16px;
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
 </style>
