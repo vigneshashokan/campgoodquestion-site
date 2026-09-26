@@ -1,0 +1,23 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const page = await getEntry('pages', 'contact');
+if (!page) throw new Error('Missing src/content/pages/contact.md');
+const { Content } = await render(page);
+---
+
+<Base title={page.data.title} description={page.data.description}>
+	<h1>{page.data.title}</h1>
+	<Content />
+
+	<!-- Netlify Forms: detected at deploy time; submissions show in the Netlify dashboard. -->
+	<form name="contact" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="bot-field">
+		<input type="hidden" name="form-name" value="contact" />
+		<p hidden><label>Don't fill this out: <input name="bot-field" /></label></p>
+		<p><label>Name <input type="text" name="name" autocomplete="name" /></label></p>
+		<p><label>Email <input type="email" name="email" autocomplete="email" /></label></p>
+		<p><label>Your question or feedback <textarea name="message" rows="6" required></textarea></label></p>
+		<p><button type="submit">Send</button></p>
+	</form>
+</Base>

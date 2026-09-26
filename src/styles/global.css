@@ -1,0 +1,15 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+	margin: 0;
+	font-family: system-ui, sans-serif;
+	line-height: 1.6;
+}
+
+main, header, footer {
+	max-width: 42rem;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+img { max-width: 100%; height: auto; }

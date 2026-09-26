@@ -1,0 +1,19 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+// Every Markdown file in src/content/pages becomes /<filename>/,
+// except the ones with their own route (home → /, contact → /contact/).
+export async function getStaticPaths() {
+	const pages = await getCollection('pages', (p) => !['home', 'contact'].includes(p.id));
+	return pages.map((page) => ({ params: { slug: page.id }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<Base title={page.data.title} description={page.data.description}>
+	<h1>{page.data.title}</h1>
+	<Content />
+</Base>
