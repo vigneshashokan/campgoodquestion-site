@@ -17,13 +17,20 @@ years:
     address_street:
     map_label:
     photo: /images/history-2022.jpg
+  - year: 2023
+    title: Another year of questions
+    note: "More dust, more tea, more strangers who didn't stay strangers."
+    address_time:
+    address_street:
+    map_label:
+    photo: /images/history-2023.jpg
   - year: 2024
     title: The lantern is lit
     note: "Our very first year. A kettle, a griddle, and a handful of people asking each other good questions way out at 7:45 & F."
     address_time: "7:45"
     address_street: F
     map_label: below
-    photo: /images/history-2024.jpg
+    photo:
   - year: 2025
     title: Closer to the heart
     note: "We moved in toward the Man and settled at 4:30 & D. More tea, more questions, more strangers who didn't stay strangers."
