@@ -3,6 +3,13 @@ header:
   title: "The dust forgets. We don't."
   intro: Every August the city rises from nothing, and every September it vanishes. These are the snapshots we kept.
 years:
+  - year: 2019
+    title: Where it started
+    note: "Before the kettle and the griddle, there were five big letters and a question mark standing in the dust."
+    address_time:
+    address_street:
+    map_label:
+    photo: /images/history-2019.jpg
   - year: 2024
     title: The lantern is lit
     note: "Our very first year. A kettle, a griddle, and a handful of people asking each other good questions way out at 7:45 & F."
