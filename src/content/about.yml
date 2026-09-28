@@ -30,7 +30,7 @@ years:
     address_time: "7:45"
     address_street: F
     map_label: below
-    photo:
+    photo: /images/history-2024.jpg
   - year: 2025
     title: Closer to the heart
     note: "We moved in toward the Man and settled at 4:30 & D. More tea, more questions, more strangers who didn't stay strangers."
