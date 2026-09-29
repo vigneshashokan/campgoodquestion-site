@@ -100,7 +100,7 @@ content:
         list: { min: 1 }
         fields:
           - { name: name, label: Name, type: string, required: true }
-          - { name: when, label: When, type: string, required: true, description: 'e.g. "I · DUSK"' }
+          - { name: when, label: When, type: string, required: true, description: 'e.g. "I · AFTERNOON"' }
           - { name: short, label: Short description, type: text, required: true }
           - { name: long, label: Longer description (Our Camp page only), type: text, required: true }
           - { name: image, label: Photo, type: image }
