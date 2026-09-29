@@ -3,23 +3,44 @@ header:
   title: "The dust forgets. We don't."
   intro: Every August the city rises from nothing, and every September it vanishes. These are the snapshots we kept.
 years:
+  - year: 2019
+    title: Where it started
+    note: "Before the kettle and the griddle, there were five big letters and a question mark standing in the dust."
+    address_time:
+    address_street:
+    map_label:
+    photo: /images/history-2019.jpg
+  - year: 2022
+    title: Back on the playa
+    note: "After two years away, the city came back, and so did we."
+    address_time:
+    address_street:
+    map_label:
+    photo: /images/history-2022.jpg
+  - year: 2023
+    title: Another year of questions
+    note: "More dust, more tea, more strangers who didn't stay strangers."
+    address_time:
+    address_street:
+    map_label:
+    photo: /images/history-2023.jpg
   - year: 2024
-    title: The lantern is lit
-    note: "Our very first year. A kettle, a griddle, and a handful of people asking each other good questions way out at 7:45 & F."
+    title: Lit up and rolling
+    note: "By day, a kettle and a griddle; by night, the whole crew strung with lights and riding out together, asking good questions all the way across the playa."
     address_time: "7:45"
     address_street: F
     map_label: below
     photo: /images/history-2024.jpg
   - year: 2025
     title: Closer to the heart
-    note: "We moved in toward the Man and settled at 4:30 & D. More tea, more questions, more strangers who didn't stay strangers."
+    note: "The circle grew. More cushions, more kettles, more questions that ran past midnight, and more strangers who wandered in for tea and left as friends."
     address_time: "4:30"
     address_street: D
     map_label: left
-    photo: /images/history-2025.jpg
+    photo:
   - year: 2026
     title: A new corner of the city
-    note: "The city rebuilt, and so did we. Tea at dusk, questions by night, and dosas on Tuesdays and Thursdays at 4:15 & E."
+    note: "The city rose from the dust again, and so did we. Tea at dusk, questions deep into the night, and dosas every Tuesday and Thursday for anyone who wandered by."
     address_time: "4:15"
     address_street: E
     map_label: right
