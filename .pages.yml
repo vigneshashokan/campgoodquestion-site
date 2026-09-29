@@ -105,30 +105,6 @@ content:
           - { name: long, label: Longer description (Our Camp page only), type: text, required: true }
           - { name: image, label: Photo, type: image }
           - { name: slide_image, label: Our Camp photo, type: image, description: Optional. A different photo for the slideshow here; leave empty to use the one above. }
-      - name: dues
-        label: Dues section
-        type: object
-        fields:
-          - { name: eyebrow, label: Small label, type: string, required: true }
-          - { name: title, label: Heading, type: string, required: true }
-          - { name: intro, label: Intro, type: text, required: true }
-          - { name: covered_note, label: Hint under "What's covered", type: string, required: true }
-          - { name: not_covered_note, label: Hint under "What's on you", type: string, required: true }
-          - name: covered
-            label: What's covered
-            type: object
-            list: true
-            fields: &duesItem
-              - { name: title, label: Title, type: string, required: true }
-              - { name: details, label: Details, type: text, required: true }
-              - { name: note, label: Warning note (optional), type: string }
-              - { name: link_label, label: Link label (optional), type: string }
-              - { name: link_url, label: Link URL (optional), type: string }
-          - name: not_covered
-            label: What's on you
-            type: object
-            list: true
-            fields: *duesItem
 
   - name: about
     label: About Us
@@ -223,6 +199,30 @@ content:
           - { name: title, label: Title, type: string, required: true }
           - { name: text, label: Text, type: text, required: true }
           - { name: text_when_open, label: Text while applications are open (optional), type: text }
+      - name: dues
+        label: Dues section
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+          - { name: intro, label: Intro, type: text, required: true }
+          - { name: covered_note, label: Hint under "What's covered", type: string, required: true }
+          - { name: not_covered_note, label: Hint under "What's on you", type: string, required: true }
+          - name: covered
+            label: What's covered
+            type: object
+            list: true
+            fields: &duesItem
+              - { name: title, label: Title, type: string, required: true }
+              - { name: details, label: Details, type: text, required: true }
+              - { name: note, label: Warning note (optional), type: string }
+              - { name: link_label, label: Link label (optional), type: string }
+              - { name: link_url, label: Link URL (optional), type: string }
+          - name: not_covered
+            label: What's on you
+            type: object
+            list: true
+            fields: *duesItem
       - name: pitch_in
         label: Build & strike
         type: object

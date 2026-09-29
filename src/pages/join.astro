@@ -4,13 +4,17 @@ import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { url } from '../lib/url';
 
-const { header, steps, pitch_in, faq } = (await getEntry('join', 'join'))!.data;
+const { header, steps, dues, pitch_in, faq } = (await getEntry('join', 'join'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
 const open = settings.applications_open;
 const mailto = (subject: string) => `mailto:${settings.contact_email}?subject=${encodeURIComponent(subject)}`;
 // Opens the contact form with the "Notify Me" topic picked and the message filled in (see contact.astro).
 const notifyMe = `${url('/contact/')}?${new URLSearchParams({ topic: 'Notify Me', message: "I'm excited about Good Question. Please notify me when the application opens!" })}`;
 
+const duesTabs = [
+	{ id: 'in', label: "What's covered", note: dues.covered_note, items: dues.covered, mark: '✦' },
+	{ id: 'out', label: "What's on you", note: dues.not_covered_note, items: dues.not_covered, mark: '○' },
+];
 const faqSets = [
 	{ id: 'first', label: 'Playa virgin', items: faq.first_timers },
 	{ id: 'vet', label: 'Veteran', items: faq.veterans },
@@ -49,6 +53,55 @@ const pad = (n: number) => String(n).padStart(2, '0');
 					<div class="mono-label">{s.label}</div>
 					<h3>{s.title}</h3>
 					<p>{open && s.text_when_open ? s.text_when_open : s.text}</p>
+				</div>
+			))
+		}
+	</section>
+
+	<section class="panel dues" data-tabs>
+		<div class="dues-head">
+			<div class="eyebrow">{dues.eyebrow}</div>
+			<h2>{dues.title}</h2>
+			<p class="body">{dues.intro}</p>
+		</div>
+		<div class="dues-switch">
+			<div class="pills" role="tablist">
+				{
+					duesTabs.map((t, i) => (
+						<button class="pill" role="tab" data-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'}>
+							{t.label}
+						</button>
+					))
+				}
+			</div>
+		</div>
+		{
+			duesTabs.map((t, i) => (
+				<div data-panel={t.id} data-active={i === 0 ? '' : undefined} role="tabpanel">
+					<p class="dues-note">{t.note}</p>
+					<div class="dues-list">
+						{t.items.map((d) => (
+							<details name={`dues-${t.id}`} class={t.id}>
+								<summary>
+									<span class="mark" aria-hidden="true">{t.mark}</span>
+									<span class="dues-title">{d.title}</span>
+									<span class="sign" aria-hidden="true" />
+								</summary>
+								<div class="dues-detail">
+									<p>{d.details}</p>
+									{d.link_url && (
+										<p>
+											{d.link_label || 'More info'}:{' '}
+											<a href={d.link_url} target="_blank" rel="noopener noreferrer" class="inline-link">
+												{d.link_url.replace(/^https?:\/\//, '').replace(/\/$/, '')} ↗
+											</a>
+										</p>
+									)}
+									{d.note && <p class="notice">{d.note}</p>}
+								</div>
+							</details>
+						))}
+					</div>
 				</div>
 			))
 		}
@@ -172,6 +225,42 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		.step { padding: 14px 0; }
 		.step .mono-label { margin-bottom: 10px; }
 	}
+
+	.dues { margin-top: clamp(72px, 9vw, 100px); }
+	.dues-head { max-width: 620px; margin-bottom: 40px; }
+	.dues-head .eyebrow { margin-bottom: 18px; }
+	.dues-head h2 { font-size: clamp(36px, 4.4vw, 52px); line-height: 1.02; }
+	.dues-head .body { margin-top: 20px; line-height: 1.6; }
+	.dues-switch { display: flex; justify-content: center; }
+	/* Phones: a slimmer panel edge so both pills fit side by side across the full width. */
+	@media (max-width: 560px) {
+		.dues { padding-inline: 20px; }
+		.dues .pills { display: grid; width: 100%; }
+		.dues .pill { padding-inline: 10px; }
+	}
+	.dues-note { margin: 14px 0 24px; text-align: center; color: var(--muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
+	.dues-list { max-width: 1080px; margin: 0 auto; border-top: 1px solid var(--line); }
+	.dues-list details { border-bottom: 1px solid var(--line); }
+	.dues-list summary {
+		display: flex;
+		gap: 14px;
+		align-items: baseline;
+		padding: 16px 0;
+		cursor: pointer;
+		list-style: none;
+	}
+	.dues-list summary::-webkit-details-marker { display: none; }
+	.mark { flex: none; width: 12px; font-size: 12px; color: var(--amber); }
+	.out .mark { color: var(--muted); }
+	.dues-title { flex: 1; font-size: 17px; font-weight: 600; transition: color 0.2s ease; }
+	/* data-state='' marks an item that's animating shut, so it already looks closed. */
+	details[open]:not([data-state='']) .dues-title { color: var(--amber); }
+	.sign { flex: none; font-family: var(--mono); font-size: 16px; color: var(--amber); }
+	.sign::after { content: '+'; }
+	details[open]:not([data-state='']) .sign::after { content: '−'; }
+	.dues-detail { padding: 0 0 16px 26px; display: flex; flex-direction: column; gap: 10px; }
+	.dues-detail p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+	.dues-detail .notice { color: var(--ink); font-size: 15px; padding: 10px 14px; }
 
 	.pitch-in { padding: clamp(72px, 9vw, 100px) var(--gutter) 0; }
 	.pitch-in .eyebrow { margin-bottom: 20px; }

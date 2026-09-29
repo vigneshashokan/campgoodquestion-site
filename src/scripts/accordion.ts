@@ -1,4 +1,4 @@
-// Accordions from <details name="group"> (Our Camp dues, Join Us FAQ on phones): items open and close
+// Accordions from <details name="group"> (Join Us dues, and the FAQ on phones): items open and close
 // smoothly, one per group at a time. Safari can't animate <details> height in CSS yet.
 // We take over the one-open-at-a-time job from the name attribute, which would snap the other item shut.
 // While an item animates shut it's still [open], so it carries data-state="" for CSS to style it as closed.

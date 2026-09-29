@@ -62,13 +62,6 @@ export const collections = {
 					}),
 				)
 				.min(1),
-			dues: section.extend({
-				intro: z.string(),
-				covered_note: z.string(),
-				not_covered_note: z.string(),
-				covered: z.array(duesItem),
-				not_covered: z.array(duesItem),
-			}),
 		}),
 	),
 	about: single(
@@ -123,6 +116,13 @@ export const collections = {
 			steps: z.array(
 				z.object({ label: z.string(), title: z.string(), text: z.string(), text_when_open: optional }),
 			),
+			dues: section.extend({
+				intro: z.string(),
+				covered_note: z.string(),
+				not_covered_note: z.string(),
+				covered: z.array(duesItem),
+				not_covered: z.array(duesItem),
+			}),
 			pitch_in: section.extend({
 				items: z.array(z.object({ label: z.string(), title: z.string(), text: z.string(), image: optional })),
 			}),

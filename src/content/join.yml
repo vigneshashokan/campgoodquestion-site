@@ -13,6 +13,59 @@ steps:
   - label: III · COMMUNICATE
     title: Be in the know
     text: We organize monthly camp meetings so that all members are up to date on every detail and are part of the planning process.
+dues:
+  eyebrow: What your dues cover
+  title: "You bring the curiosity. We've got the rest."
+  intro: We build it together, run it together, and strike it together.
+  covered_note: Tap any line for the details.
+  not_covered_note: "Not covered by dues. Feel free to reach out and we'll help you plan for all of it."
+  covered:
+    - title: Camp infrastructure
+      details: The living space in the camp is covered with shade structures to cover your tents, and the common area to cover the tables, decorations and more, for our own use and for our gift to the playa.
+    - title: 2 hot meals a day
+      details: We provide breakfast and dinner with vegan options. We also have a fully stocked pantry with snacks for you to nibble around for when you have the craving during the day or have the midnight munchies.
+    - title: Water
+      details: "The camp provides drinking water and Gatorade for the entire week, but bring enough water for the drive and for maybe the first day until the tank arrives, but you won't haul water for the week. We also have stations for cleaning your utensils and washing your hands."
+    - title: Alcohol
+      details: "Our camp has a bar, and we'll all want to drink at it whenever we want. You're welcome to bring your own extras."
+    - title: Electricity
+      details: "We can run power to your tent. Bring a power strip for lights, air mattress pumps, fans, and charging your phone (not that it'll work out there). We also have a separate common outlet for everyone in the camp to charge their eBikes."
+      note: It can NOT run actual air conditioners. Ask us about swamp coolers.
+    - title: WiFi
+      details: "Since last year, we have added Starlink WiFi to the list of things we offer. It's good enough to check your messages."
+    - title: Camp shower
+      details: "Available to every member, but are limited. We understand it's dusty out there but we can't provide water for the shower every day!"
+    - title: Grey water removal
+      details: "Leave No Trace includes waste water: brushing teeth, showering, cooking. The camp has a large receptacle for all of it, and it gets pumped during the week."
+    - title: Our tea ceremony & connection gift
+      details: "The most fun part of camp: we get to BE Burning Man. Do it well and someone back in the default world will say they found this one awesome camp full of super nice people. If that doesn't excite you, this probably isn't your camp :)"
+    - title: A new community
+      details: "People you'll find at the next burn, and plenty of days in between."
+  not_covered:
+    - title: Burning Man tickets
+      details: "We don't provide the tickets to the Burning Man. If you are bringing in a vehicle, you should get a vehicle pass as well. The camp will have some tickets available but we will all work as a team to get tickets for anyone the allocation in the stewards sale doesn't support."
+      link_label: Ticket info
+      link_url: https://tickets.burningman.org/
+    - title: Your shelter
+      details: "Space is limited. We'll help people bunk together and share, but your tent or shiftpod is on you."
+    - title: Personal gear
+      details: "Camelbak, utensils, goggles, dust masks, lights, sunscreen and the like. We'll share packing lists so you know what you need."
+    - title: Your bike
+      details: "You WILL need one! And we suggest an eBike instead of a regular one. Driving isn't allowed and the city is too big to walk. If there's enough interest, we may set up another bulk order with playa bike repair (TBD)."
+    - title: Transportation
+      details: "We'll run a logistics chat to coordinate, and we may rent passenger vans so fewer people drive. It isn't part of base dues. Carpooling and the Burner Bus are options too."
+    - title: Moving your personal items
+      details: "The camp may be able to carry some shelters or bikes, but there's NO GUARANTEE. Getting everything of yours TO AND FROM the playa is on you."
+    - title: Hauling camp trash off the playa
+      details: Everyone helps take all waste off the playa.
+    - title: Someone doing your teardown
+      details: Everyone supports some part of teardown. If you have to leave early, work with the leads to find where you can help.
+    - title: Power for AC or other big cooling
+      details: "If you bring an air conditioner, you'll need to supply the power for it too."
+    - title: Water & food to and from the playa
+      details: Bring a 7-gallon container for yourself to get to camp and last until the tank arrives.
+    - title: Someone pulling your weight
+      details: Camp only works if everyone pitches in.
 pitch_in:
   eyebrow: Build & strike
   title: Many hands build it. All hands take it down.
@@ -46,13 +99,13 @@ faq:
     - question: What if I get overwhelmed?
       answer: "It happens to everyone. Camp is your home base: come back, drink water, eat something, and find one of us. Rangers and medical are around the city too."
   veterans:
-    - question: Will I be fed?
-      answer: "Two hot meals a day, plus Dosa Days every Tuesday and Thursday. Nobody goes hungry on our watch."
-    - question: Can I shower out there?
-      answer: Yes. We have a camp shower. Everyone pitches in in hauling the grey water away.
-    - question: Is there power?
-      answer: Camp electricity for charging, lighting, and keeping the kitchen running.
-    - question: "What's expected of me?"
-      answer: Pitch in. Everyone helps build, run, and strike the camp.
+    - question: "I've camped elsewhere. What's different here?"
+      answer: "We're small and built around three gifts: tea at dusk, The Connection by night, and Dosa Days. Less spectacle, more conversation."
     - question: How big is the camp?
       answer: Somewhere between 20 and 50 curious humans. Small enough to know everyone by the end of the week.
+    - question: Can I help run the tea ceremony or Dosa Days?
+      answer: "Everyone gets to pick the shifts they are interested in on multiple days. This will happen when we plan a couple of months before the burn. Feel free to pick up the shift you're comfortable with. If you don't get the shift you like, you can always exchange it with other people in the camp."
+    - question: Can I bring something of my own to share?
+      answer: "Yes! A workshop, a game, a performance, a strange little art piece. Bring it up at a camp meeting and we'll find it a time and a corner."
+    - question: Can I bring a friend?
+      answer: "Send them this page. Everyone applies on their own, and first-timers are always welcome."
