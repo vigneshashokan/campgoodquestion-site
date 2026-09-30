@@ -61,31 +61,34 @@ const arrow = (points: string) =>
 			<div class="eyebrow">{day.eyebrow}</div>
 			<h2 class="h2" id="day-title">{day.title}</h2>
 		</div>
-		{/* Each moment pins to the screen and the next one slides up over it, like flipping through
-		    photos on a phone's lock screen. It's plain page scrolling, so nothing traps the visitor. */}
-		<ol class="moments" data-day>
-			{
-				day.moments.map((m, i) => (
-					<li class="moment">
-						<div class="frame photo">
-							{m.photo && <img src={url(m.photo)} alt="" loading="lazy" />}
-							<p class="clock" aria-hidden="true">{m.time}</p>
-							<div class="caption">
-								<span class="range">{m.range}</span>
-								<h3>{m.title}</h3>
-								{m.text && <p>{m.text}</p>}
-							</div>
-							{/* Where we are in the day. Mouse users can click to jump; everyone else just scrolls. */}
-							<div class="dots" aria-hidden="true">
-								{day.moments.map((_, j) => (
-									<button type="button" tabindex="-1" data-jump={j} class:list={{ on: i === j }} />
-								))}
-							</div>
-						</div>
-					</li>
-				))
-			}
-		</ol>
+		{/* The frame pins to the screen while the visitor scrolls past, and each step of scrolling swaps
+		    in the next moment with a short slide-up, like the phone's lock screen. The swap always plays
+		    to the end, so it never rests half way between two photos. */}
+		<div class="day-track" data-day style={`--count: ${day.moments.length}`}>
+			<div class="day-stage">
+				<div class="frame photo">
+					<ol class="moments">
+						{
+							day.moments.map((m, i) => (
+								<li class="moment" data-state={i === 0 ? 'current' : 'after'}>
+									{m.photo && <img src={url(m.photo)} alt="" loading="lazy" />}
+									<p class="clock" aria-hidden="true">{m.time}</p>
+									<div class="caption">
+										<span class="range">{m.range}</span>
+										<h3>{m.title}</h3>
+										{m.text && <p>{m.text}</p>}
+									</div>
+								</li>
+							))
+						}
+					</ol>
+					{/* Where we are in the day. Mouse users can click to jump; everyone else just scrolls. */}
+					<div class="dots" aria-hidden="true">
+						{day.moments.map((_, j) => <button type="button" tabindex="-1" data-jump={j} class:list={{ on: j === 0 }} />)}
+					</div>
+				</div>
+			</div>
+		</div>
 	</section>
 </Base>
 
@@ -136,14 +139,39 @@ const arrow = (points: string) =>
 			}, 50);
 		}
 	}
-	// Day dots: moment i sits i screen-heights into the list.
-	const day = document.querySelector<HTMLElement>('[data-day]');
-	day?.addEventListener('click', (e) => {
-		const b = (e.target as Element).closest<HTMLElement>('[data-jump]');
-		if (!b) return;
-		const top = day.getBoundingClientRect().top + scrollY + Number(b.dataset.jump) * day.firstElementChild!.clientHeight;
-		scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-	});
+	// A day at camp: the track is one screen tall per moment; which screen we're on picks the moment.
+	const track = document.querySelector<HTMLElement>('[data-day]');
+	if (track) {
+		const moments = [...track.querySelectorAll<HTMLElement>('.moment')];
+		const dots = [...track.querySelectorAll<HTMLElement>('[data-jump]')];
+		const step = () => track.querySelector<HTMLElement>('.day-stage')!.offsetHeight;
+		let current = 0;
+		const show = (i: number) => {
+			if (i === current) return;
+			current = i;
+			moments.forEach((m, j) => (m.dataset.state = j < i ? 'before' : j === i ? 'current' : 'after'));
+			dots.forEach((d, j) => d.classList.toggle('on', j === i));
+		};
+		const update = () => {
+			const i = Math.round(-track.getBoundingClientRect().top / step());
+			show(Math.max(0, Math.min(moments.length - 1, i)));
+		};
+		let queued = false;
+		addEventListener('scroll', () => {
+			if (queued) return;
+			queued = true;
+			requestAnimationFrame(() => ((queued = false), update()));
+		}, { passive: true });
+		track.dataset.ready = ''; // makes the track tall enough to scroll through every moment
+		update();
+
+		track.addEventListener('click', (e) => {
+			const b = (e.target as Element).closest<HTMLElement>('[data-jump]');
+			if (!b) return;
+			const top = track.getBoundingClientRect().top + scrollY + Number(b.dataset.jump) * step();
+			scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+		});
+	}
 </script>
 
 <style>
@@ -217,18 +245,27 @@ const arrow = (points: string) =>
 	}
 	.day-head { padding: clamp(72px, 9vw, 100px) var(--gutter) 8px; }
 	.day-head .h2 { max-width: 720px; text-wrap: balance; }
+	/* Without JS the track is one screen tall and shows the first moment. */
+	.day-track { height: 100svh; }
+	.day-track[data-ready] { height: calc(var(--count) * 100svh); }
+	/* 92px keeps the frame clear of the sticky site header. */
+	.day-stage { position: sticky; top: 0; height: 100svh; padding: 92px var(--gutter) 20px; }
+	.frame { position: relative; height: 100%; border-radius: 24px; }
 	.moments { list-style: none; margin: 0; padding: 0; }
-	/* 92px keeps the photo clear of the sticky site header. */
 	.moment {
-		position: sticky;
-		top: 0;
-		height: 100svh;
-		padding: 92px var(--gutter) 20px;
+		position: absolute;
+		inset: 0;
+		transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.45s ease;
 	}
-	.frame { position: relative; height: 100%; border-radius: 24px; box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45); }
-	.frame img { position: absolute; inset: 0; }
+	/* The next moment slides up over the current one; going back, it slides down off it. */
+	.moment[data-state='after'] { transform: translateY(100%); }
+	.moment[data-state='before'] { transform: translateY(-12%); opacity: 0; }
+	@media (prefers-reduced-motion: reduce) {
+		.moment { transition: none; }
+	}
+	.moment img { position: absolute; inset: 0; }
 	/* Soft shade down the left side, where all the text sits, so it reads on bright playa sky. */
-	.frame::after {
+	.moment::after {
 		content: '';
 		position: absolute;
 		inset: 0;
@@ -263,10 +300,11 @@ const arrow = (points: string) =>
 		border-radius: 4px;
 		background: rgba(255, 255, 255, 0.45);
 		cursor: pointer;
+		transition: height 0.3s ease, background-color 0.3s ease;
 	}
 	.dots .on { height: 22px; background: #fff; }
 	@media (max-width: 560px) {
-		.moment { padding: 80px 12px 12px; }
+		.day-stage { padding: 80px 12px 12px; }
 		.frame { border-radius: 18px; }
 		.caption { right: 36px; }
 		.caption p { font-size: 15px; }
