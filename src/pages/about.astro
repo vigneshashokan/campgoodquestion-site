@@ -33,7 +33,7 @@ const rows = placeYears(years)
 							<span class="card-inner">
 								<span class="face">
 									<span class="square">
-										{y.photo && <img src={url(y.photo)} alt={`Camp Good Question in ${y.year}`} loading="lazy" />}
+										{y.photo && <img src={url(y.photo)} alt={`Good Question in ${y.year}`} loading="lazy" />}
 										{!y.photo && !y.placed && (
 											<span class="future">
 												<img src={url('/qmark.png')} alt="" />
