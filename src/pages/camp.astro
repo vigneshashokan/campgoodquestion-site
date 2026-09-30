@@ -162,10 +162,7 @@ const arrow = (points: string) =>
 		const moments = [...track.querySelectorAll<HTMLElement>('.moment')];
 		const dots = [...track.querySelectorAll<HTMLElement>('[data-jump]')];
 		const steps = track.querySelector<HTMLElement>('.day-steps')!;
-		const stage = track.querySelector<HTMLElement>('.day-stage')!;
 		const step = () => steps.offsetHeight / Math.max(1, moments.length - 1);
-		// Where the stage pins (0, or lower on upright screens where it's centered); steps count from there.
-		const pinAt = () => parseFloat(getComputedStyle(stage).top) || 0;
 		let current = 0;
 		const show = (i: number) => {
 			if (i === current) return;
@@ -174,7 +171,8 @@ const arrow = (points: string) =>
 			dots.forEach((d, j) => d.classList.toggle('on', j === i));
 		};
 		const update = () => {
-			const i = Math.round((pinAt() - track.getBoundingClientRect().top) / step());
+			if (!step()) return; // upright screens stack the moments instead (no spacer)
+			const i = Math.round(-track.getBoundingClientRect().top / step());
 			show(Math.max(0, Math.min(moments.length - 1, i)));
 		};
 		let queued = false;
@@ -189,7 +187,7 @@ const arrow = (points: string) =>
 		track.addEventListener('click', (e) => {
 			const b = (e.target as Element).closest<HTMLElement>('[data-jump]');
 			if (!b) return;
-			const top = track.getBoundingClientRect().top + scrollY - pinAt() + Number(b.dataset.jump) * step();
+			const top = track.getBoundingClientRect().top + scrollY + Number(b.dataset.jump) * step();
 			scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 		});
 	}
@@ -264,16 +262,12 @@ const arrow = (points: string) =>
 		.slide .body { font-size: 14px; line-height: 1.55; }
 		.arrow { width: 44px; height: 44px; }
 	}
-	/* --pin-top keeps the frame clear of the sticky site header (--header-h) once pinned. --gap is the space above
-	   the first photo (under the heading) and below the last (at the page's end). The frame is always 3:2. On wide
-	   screens it's as tall as fits between those gaps; on upright ones it's as wide as the screen. */
+	/* --pin-top keeps the frame clear of the sticky site header once pinned. --gap is the space above the first
+	   photo (under the heading) and below the last (at the page's end). The 3:2 frame fills the screen between them. */
 	.day {
-		--header-h: 85px;
 		--pin-top: 92px;
-		--pad-x: var(--gutter);
 		--gap: calc(var(--pin-top) - 40px);
 		--frame-h: calc(100svh - var(--pin-top) - var(--gap));
-		--step: 100svh;
 	}
 	.day-head { padding: clamp(72px, 9vw, 100px) var(--gutter) 8px; }
 	.day-head .h2 { max-width: 720px; text-wrap: balance; }
@@ -282,21 +276,9 @@ const arrow = (points: string) =>
 	.day-track { margin-top: -48px; margin-bottom: calc(var(--gap) - 72px); }
 	/* Without JS there's no spacer, and the section is just the first moment. */
 	.day-steps { display: none; }
-	.day-track[data-ready] .day-steps { display: block; height: calc((var(--count) - 1) * var(--step)); }
-	.day-stage { position: sticky; top: 0; padding: var(--pin-top) var(--pad-x) 0; display: grid; justify-items: center; }
+	.day-track[data-ready] .day-steps { display: block; height: calc((var(--count) - 1) * 100svh); }
+	.day-stage { position: sticky; top: 0; padding: var(--pin-top) var(--gutter) 0; display: grid; justify-items: center; }
 	.frame { position: relative; width: min(100%, var(--frame-h) * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
-	/* Upright screens: the 3:2 frame is much shorter than the screen, so it pins centered below the header,
-	   the page ends with the same space below it, and each step takes less scrolling. */
-	@media (orientation: portrait) {
-		.day {
-			--pad-x: var(--edge);
-			--frame-h: calc((100vw - 2 * var(--pad-x)) / 1.5);
-			--room: calc((100svh - var(--header-h) - var(--frame-h)) / 2);
-			--step: 60svh;
-		}
-		.day-stage { top: calc(var(--room) + var(--header-h) - var(--pin-top)); }
-		.day-track { margin-bottom: calc(var(--room) - 72px); }
-	}
 	.moments { list-style: none; margin: 0; padding: 0; }
 	.moment {
 		position: absolute;
@@ -357,8 +339,29 @@ const arrow = (points: string) =>
 		transition: height 0.3s ease, background-color 0.3s ease;
 	}
 	.dots .on { height: 22px; background: #fff; }
+	/* Upright screens: a landscape photo pinned on a tall screen leaves most of it empty, so the moments
+	   become a plain stack of 3:2 cards instead. No pinning, no swapping, no dots. */
+	@media (orientation: portrait) {
+		.day-track[data-ready] .day-steps { display: none; }
+		.day-stage { position: static; }
+		.frame { width: 100%; aspect-ratio: auto; border: 0; background: none; overflow: visible; container-type: normal; }
+		.moments { display: grid; gap: 12px; }
+		.moment,
+		.moment[data-state] {
+			position: relative;
+			aspect-ratio: 3 / 2;
+			transform: none;
+			opacity: 1;
+			transition: none;
+			overflow: hidden;
+			border-radius: 16px;
+			border: 1px solid var(--amber-line);
+			container-type: inline-size;
+		}
+		.dots { display: none; }
+	}
 	@media (max-width: 560px) {
-		.day { --header-h: 65px; --pin-top: 80px; --pad-x: 12px; }
-		.frame { border-radius: 16px; }
+		.day { --pin-top: 80px; }
+		.day-stage { padding-inline: 12px; }
 	}
 </style>
