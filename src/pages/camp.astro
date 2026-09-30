@@ -77,12 +77,12 @@ const arrow = (points: string) =>
 										<div class="collage">
 											{m.photos.map((src) => (
 												<span>
-													<img src={url(src)} alt="" loading="lazy" />
+													<img src={url(src)} alt="" loading="lazy" decoding="async" />
 												</span>
 											))}
 										</div>
 									) : (
-										m.photo && <img src={url(m.photo)} alt="" loading="lazy" />
+										m.photo && <img src={url(m.photo)} alt="" loading="lazy" decoding="async" />
 									)}
 									<p class="clock" aria-hidden="true">
 										{splitTime(m.time)[0]}
@@ -103,7 +103,7 @@ const arrow = (points: string) =>
 					</div>
 				</div>
 			</div>
-			{/* Invisible: one screen of scrolling per moment after the first, while the stage stays pinned. */}
+			{/* Invisible: a short stretch of scrolling per moment after the first, while the stage stays pinned. */}
 			<div class="day-steps" />
 		</div>
 	</section>
@@ -156,13 +156,19 @@ const arrow = (points: string) =>
 			}, 50);
 		}
 	}
-	// A day at camp: the track is one screen tall per moment; which screen we're on picks the moment.
+	// A day at camp: while the stage is pinned, one swipe (or wheel click) moves exactly one moment. The first
+	// bit of scrolling in a direction switches to the next moment, only once per swipe, and when the scroll
+	// comes to rest the page eases to that moment's spot. Past the first and last moments it scrolls freely.
 	const track = document.querySelector<HTMLElement>('[data-day]');
 	if (track) {
 		const moments = [...track.querySelectorAll<HTMLElement>('.moment')];
 		const dots = [...track.querySelectorAll<HTMLElement>('[data-jump]')];
 		const steps = track.querySelector<HTMLElement>('.day-steps')!;
-		const step = () => steps.offsetHeight / Math.max(1, moments.length - 1);
+		const last = moments.length - 1;
+		const step = () => steps.offsetHeight / Math.max(1, last);
+		const progress = () => -track.getBoundingClientRect().top / step(); // 0 = first moment's spot, 1 = second's…
+		const clamp = (i: number) => Math.max(0, Math.min(last, i));
+		const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
 		let current = 0;
 		const show = (i: number) => {
 			if (i === current) return;
@@ -170,38 +176,126 @@ const arrow = (points: string) =>
 			moments.forEach((m, j) => (m.dataset.state = j < i ? 'before' : j === i ? 'current' : 'after'));
 			dots.forEach((d, j) => d.classList.toggle('on', j === i));
 		};
-		const update = () => {
-			if (!step()) return; // upright screens stack the moments instead (no spacer)
-			const i = Math.round(-track.getBoundingClientRect().top / step());
-			show(Math.max(0, Math.min(moments.length - 1, i)));
+
+		// Where the page last came to rest. A swipe is measured from there: a wheel click can jump the
+		// whole way before the first scroll event arrives.
+		let anchor = progress();
+		let from: number | null = null; // progress when this swipe began
+		let fromMoment = 0;
+		let settling = false; // our own easing scroll is running
+		let touching = false;
+		let rest = 0;
+		const goTo = (i: number) => {
+			settling = true;
+			anchor = i;
+			scrollTo({ top: track.getBoundingClientRect().top + scrollY + i * step(), behavior: smooth() });
+		};
+		// Our easing scroll has stopped. Something may have overridden it (Firefox keeps a trackpad swipe
+		// coasting, or the scroll bar was dragged), so make the moment match where the page actually rests.
+		const settled = () => {
+			settling = false;
+			const p = progress();
+			anchor = p;
+			show(clamp(Math.round(p)));
+			if (p > -0.01 && p < last + 0.01 && Math.abs(p - current) > 0.02) goTo(current);
+		};
+		const settle = () => {
+			if (touching) return void (rest = window.setTimeout(settle, 150));
+			const p = progress();
+			const moved = current !== fromMoment;
+			from = null;
+			anchor = p;
+			// Above the first moment or below the last, the page scrolls freely: never pull the visitor back
+			// (they scrolled up to the heading, jumped to the top, or a reload restored the scroll). Have the
+			// nearest moment ready for when they return.
+			if (p < -0.01 || p > last + 0.01) return show(clamp(Math.round(p)));
+			// Ease to the current moment if this swipe changed it, or if it came to rest between two moments.
+			if (moved || (p > 0.01 && p < last - 0.01)) {
+				if (Math.abs(p - current) > 0.01) goTo(current);
+			}
+		};
+		const onScroll = () => {
+			clearTimeout(rest);
+			rest = window.setTimeout(settle, 150);
+			const p = progress();
+			if (settling) return;
+			if (from === null) (from = anchor), (fromMoment = current);
+			const pinned = from > -0.05 && from < last + 0.05;
+			// Arriving from above or below, or already scrolled past either end: follow the scroll.
+			if (!pinned || p < -0.01 || p > last + 0.01) show(clamp(Math.round(p)));
+			else if (current === fromMoment) {
+				if (p > from + 0.12) show(clamp(current + 1));
+				else if (p < from - 0.12) show(clamp(current - 1));
+			}
 		};
 		let queued = false;
 		addEventListener('scroll', () => {
+			if (settling) {
+				// Our easing scroll: done once it stops moving.
+				clearTimeout(rest);
+				rest = window.setTimeout(settled, 120);
+				return;
+			}
 			if (queued) return;
 			queued = true;
-			requestAnimationFrame(() => ((queued = false), update()));
+			requestAnimationFrame(() => ((queued = false), onScroll()));
 		}, { passive: true });
+		// A new swipe counts even while the last one is still coasting: a finger going down, or a wheel/trackpad
+		// burst that suddenly picks up speed (coasting only ever slows down).
+		const newSwipe = () => {
+			settling = false;
+			anchor = progress();
+			from = null;
+		};
+		addEventListener('touchstart', () => ((touching = true), newSwipe()), { passive: true });
+		// Wheel: a burst's speed rises to a peak and then coasts down. Once it has slowed to under half its peak,
+		// a clear pick-up in speed is a new swipe. Only while coasting: at rest, the browser may already have
+		// scrolled by the time this runs, and the rest position is the right starting point anyway.
+		let peak = 0;
+		let low = 0;
+		let lastWheelAt = 0;
+		addEventListener('wheel', (e) => {
+			const d = Math.abs(e.deltaY);
+			const now = performance.now();
+			const fresh = now - lastWheelAt > 250;
+			lastWheelAt = now;
+			if (from !== null && !settling && (fresh || (low < peak / 2 && d > Math.max(8, low * 2.5)))) newSwipe();
+			if (fresh || from === null || d > peak) (peak = d), (low = d);
+			else low = Math.min(low, d);
+		}, { passive: true });
+		addEventListener('touchend', () => (touching = false), { passive: true });
+		addEventListener('touchcancel', () => (touching = false), { passive: true });
+		// The photos wait off-screen, below the frame's edge, until they slide in. Safari only loads a lazy
+		// image once it's visible, so it would pop in mid-slide: load them all as the section comes near.
+		new IntersectionObserver((entries, io) => {
+			if (!entries[0].isIntersecting) return;
+			track.querySelectorAll('img').forEach((img) => (img.loading = 'eager'));
+			io.disconnect();
+		}, { rootMargin: '100% 0px' }).observe(track);
 		track.dataset.ready = ''; // shows the spacer, so there's room to scroll through every moment
-		update();
+		show(clamp(Math.round(progress())));
 
 		// Upright screens center the slide in a full-screen stage, which leaves empty space above it until it
 		// pins. Pull the track up under the heading by that much, so the first time sits just below it.
-		const heading = document.querySelector<HTMLElement>('.day-head')!;
+		// Measured from the layout itself (offsetTop ignores scrolling, pinning and the slide transforms), so it
+		// holds wherever the page is scrolled, and redone whenever the slide's size changes (fonts, rotation).
+		const stage = track.querySelector<HTMLElement>('.day-stage')!;
+		const clock = moments[0].querySelector<HTMLElement>('.clock')!;
 		const tuck = () => {
-			track.style.removeProperty('--lead');
-			if (!matchMedia('(orientation: portrait)').matches) return;
-			const clock = moments[0].querySelector<HTMLElement>('.clock')!;
-			const lead = clock.getBoundingClientRect().top - heading.getBoundingClientRect().bottom - 16;
-			track.style.setProperty('--lead', `${Math.max(0, lead)}px`);
+			if (!matchMedia('(orientation: portrait)').matches) return track.style.removeProperty('--lead');
+			let top = 0;
+			for (let el: HTMLElement | null = clock; el && el !== stage; el = el.offsetParent as HTMLElement | null) top += el.offsetTop;
+			// Track starts 48px up under the heading block; the time should sit 16px below that block.
+			track.style.setProperty('--lead', `${Math.max(0, top - 48 - 16)}px`);
 		};
-		tuck();
-		addEventListener('resize', tuck);
+		const ro = new ResizeObserver(tuck);
+		[stage, clock, moments[0].querySelector('.caption')!].forEach((el) => ro.observe(el));
 
 		track.addEventListener('click', (e) => {
 			const b = (e.target as Element).closest<HTMLElement>('[data-jump]');
 			if (!b) return;
-			const top = track.getBoundingClientRect().top + scrollY + Number(b.dataset.jump) * step();
-			scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+			show(Number(b.dataset.jump));
+			goTo(Number(b.dataset.jump));
 		});
 	}
 </script>
@@ -281,6 +375,8 @@ const arrow = (points: string) =>
 		--pin-top: 92px;
 		--gap: calc(var(--pin-top) - 40px);
 		--frame-h: calc(100svh - var(--pin-top) - var(--gap));
+		/* Scrolling per moment: about one swipe. */
+		--step: 35svh;
 	}
 	.day-head { padding: clamp(72px, 9vw, 100px) var(--gutter) 8px; }
 	.day-head .h2 { max-width: 720px; text-wrap: balance; }
@@ -289,7 +385,7 @@ const arrow = (points: string) =>
 	.day-track { margin-top: -48px; margin-bottom: calc(var(--gap) - 72px); }
 	/* Without JS there's no spacer, and the section is just the first moment. */
 	.day-steps { display: none; }
-	.day-track[data-ready] .day-steps { display: block; height: calc((var(--count) - 1) * 100svh); }
+	.day-track[data-ready] .day-steps { display: block; height: calc((var(--count) - 1) * var(--step)); }
 	.day-stage { position: sticky; top: 0; padding: var(--pin-top) var(--gutter) 0; display: grid; justify-items: center; }
 	.frame { position: relative; width: min(100%, var(--frame-h) * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
 	.moments { list-style: none; margin: 0; padding: 0; }
@@ -354,10 +450,9 @@ const arrow = (points: string) =>
 	.dots .on { height: 22px; background: #fff; }
 	/* Upright screens: the whole screen is the slide, like a phone's lock screen. The time sits above the
 	   3:2 photo and the caption below it (a pinned landscape photo alone would leave most of the screen
-	   empty), and they swap together. Each step takes less scrolling. */
+	   empty), and they swap together. */
 	@media (orientation: portrait) {
 		.day-track { margin-top: calc(-48px - var(--lead, 0px)); margin-bottom: -72px; }
-		.day-track[data-ready] .day-steps { height: calc((var(--count) - 1) * 60svh); }
 		.day-stage { height: 100svh; padding-bottom: 28px; }
 		.frame { width: 100%; height: 100%; aspect-ratio: auto; border: 0; border-radius: 0; background: none; }
 		.moment {
