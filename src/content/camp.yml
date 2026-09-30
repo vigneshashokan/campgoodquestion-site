@@ -34,10 +34,6 @@ day:
       range: 10–11 AM
       title: Breakfast
       photo: /images/camp-build.jpg
-    - time: "11:00 AM"
-      range: 11 AM–12 PM
-      title: Breakfast crew cleanup
-      photo: /images/camp-strike.jpg
     - time: "12:00 PM"
       range: 12–3 PM
       title: Tea time
