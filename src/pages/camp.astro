@@ -251,11 +251,12 @@ const arrow = (points: string) =>
 	.day-head { padding: clamp(72px, 9vw, 100px) var(--gutter) 8px; }
 	.day-head .h2 { max-width: 720px; text-wrap: balance; }
 	/* Without JS the track is one screen tall and shows the first moment. */
-	.day-track { height: 100svh; }
+	/* Pulled up under the heading: the stage's top padding is only there to clear the site header once pinned. */
+	.day-track { height: 100svh; margin-top: -48px; }
 	.day-track[data-ready] { height: calc(var(--count) * 100svh); }
 	/* 92px keeps the frame clear of the sticky site header. The frame is a 3:2 landscape at about
-	   four fifths of the screen's height, centered in the space below the header. */
-	.day-stage { position: sticky; top: 0; height: 100svh; padding: 92px var(--gutter) 20px; display: grid; place-items: center; }
+	   four fifths of the screen's height, just under the header. */
+	.day-stage { position: sticky; top: 0; height: 100svh; padding: 92px var(--gutter) 20px; display: grid; justify-items: center; align-items: start; }
 	.frame { position: relative; width: min(100%, 79svh * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
 	.moments { list-style: none; margin: 0; padding: 0; }
 	.moment {
