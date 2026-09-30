@@ -2,17 +2,17 @@ header:
   eyebrow: Our camp
   title: Steam, spice, and a circle of strangers.
   intro: "Good Question is a Black Rock City theme camp built around three gifts. Each one is an invitation: slow down, lean in, and find out who's sitting next to you."
-rituals_eyebrow: Our gift to the playa
+rituals_eyebrow: More about our gift
 rituals:
   - name: The Tea Ceremony
-    when: I · DUSK
+    when: I · AFTERNOON
     short: Steam climbs like a question mark. Sit, sip, and let the city slow down around you.
     long: "Kick off your shoes, find a cushion, and take a cup from someone you haven't met yet. It's the quietest corner of a very loud city, and the best place to catch your breath."
     image: /images/tea-ceremony.jpg
     slide_image: /images/tea-ceremony-camp.jpg
   - name: The Connection
-    when: II · NIGHT
-    short: Strangers, a few honest questions, and whatever the lantern light reveals.
+    when: II · ALL DAY
+    short: A stranger, an honest question, and wherever the answer takes you.
     long: "Our namesake ritual. We hand you a question and a stranger to ask it to. By the end, the stranger usually isn't one anymore."
     image: /images/the-connection.jpg
     slide_image: /images/the-connection-camp.jpg
@@ -22,3 +22,35 @@ rituals:
     long: Twice a week the dust smells like home cooking. Crisp, golden dosas, hot off the griddle, handed out to whoever wanders by hungry.
     image: /images/dosa-days.jpg
     slide_image: /images/dosa-days-camp.jpg
+day:
+  eyebrow: A day at camp
+  title: From first stretch to wherever the night goes.
+  moments:
+    - time: "9:00 AM"
+      range: 9–10 AM
+      title: Slow flow yoga
+      photo: /images/history-2019.jpg
+    - time: "10:00 AM"
+      range: 10–11 AM
+      title: Breakfast
+      photo: /images/day-breakfast.jpg
+    - time: "12:00 PM"
+      range: 12–3 PM
+      title: Tea time
+      text: Plus dosas on Tuesdays and Thursdays.
+      photo: /images/day-tea.jpg
+    - time: "7:00 PM"
+      range: 7–8 PM
+      title: Dinner
+      photo: /images/day-dinner.jpg
+    - time: "8:00 PM"
+      range: After dinner
+      title: The night is yours
+      text: "We plan the night together. You're free to join us, or explore on your own or with your crew."
+      photos:
+        - /images/night-1.jpg
+        - /images/night-2.jpg
+        - /images/night-3.jpg
+        - /images/night-4.jpg
+        - /images/night-5.jpg
+        - /images/night-6.jpg
