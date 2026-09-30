@@ -6,7 +6,7 @@ import { url } from '../lib/url';
 
 const camp = (await getEntry('camp', 'camp'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
-const { header, rituals_eyebrow, rituals } = camp;
+const { header, rituals_eyebrow, rituals, day } = camp;
 
 const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 const arrow = (points: string) =>
@@ -54,6 +54,38 @@ const arrow = (points: string) =>
 			</div>
 			<button class="icon-btn arrow" data-next aria-label="Next ritual" set:html={arrow('6,3 11,8 6,13')} />
 		</div>
+	</section>
+
+	<section class="day" aria-labelledby="day-title">
+		<div class="day-head">
+			<div class="eyebrow">{day.eyebrow}</div>
+			<h2 class="h2" id="day-title">{day.title}</h2>
+		</div>
+		{/* Each moment pins to the screen and the next one slides up over it, like flipping through
+		    photos on a phone's lock screen. It's plain page scrolling, so nothing traps the visitor. */}
+		<ol class="moments" data-day>
+			{
+				day.moments.map((m, i) => (
+					<li class="moment">
+						<div class="frame photo">
+							{m.photo && <img src={url(m.photo)} alt="" loading="lazy" />}
+							<p class="clock" aria-hidden="true">{m.time}</p>
+							<div class="caption">
+								<span class="range">{m.range}</span>
+								<h3>{m.title}</h3>
+								{m.text && <p>{m.text}</p>}
+							</div>
+							{/* Where we are in the day. Mouse users can click to jump; everyone else just scrolls. */}
+							<div class="dots" aria-hidden="true">
+								{day.moments.map((_, j) => (
+									<button type="button" tabindex="-1" data-jump={j} class:list={{ on: i === j }} />
+								))}
+							</div>
+						</div>
+					</li>
+				))
+			}
+		</ol>
 	</section>
 </Base>
 
@@ -104,6 +136,14 @@ const arrow = (points: string) =>
 			}, 50);
 		}
 	}
+	// Day dots: moment i sits i screen-heights into the list.
+	const day = document.querySelector<HTMLElement>('[data-day]');
+	day?.addEventListener('click', (e) => {
+		const b = (e.target as Element).closest<HTMLElement>('[data-jump]');
+		if (!b) return;
+		const top = day.getBoundingClientRect().top + scrollY + Number(b.dataset.jump) * day.firstElementChild!.clientHeight;
+		scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+	});
 </script>
 
 <style>
@@ -174,5 +214,63 @@ const arrow = (points: string) =>
 		.short { font-size: 15px; line-height: 1.5; margin-bottom: 6px; }
 		.slide .body { font-size: 14px; line-height: 1.55; }
 		.arrow { width: 44px; height: 44px; }
+	}
+	.day-head { padding: clamp(72px, 9vw, 100px) var(--gutter) 8px; }
+	.day-head .h2 { max-width: 720px; text-wrap: balance; }
+	.moments { list-style: none; margin: 0; padding: 0; }
+	/* 92px keeps the photo clear of the sticky site header. */
+	.moment {
+		position: sticky;
+		top: 0;
+		height: 100svh;
+		padding: 92px var(--gutter) 20px;
+	}
+	.frame { position: relative; height: 100%; border-radius: 24px; box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45); }
+	.frame img { position: absolute; inset: 0; }
+	/* Soft shade in the top-right and bottom-left corners so the white text reads on bright playa sky. */
+	.frame::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(ellipse 60% 55% at 100% 0%, rgba(0, 0, 0, 0.45), transparent 70%),
+			linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 45%);
+		pointer-events: none;
+	}
+	.clock, .caption, .dots { position: absolute; z-index: 1; color: #fff; }
+	.clock {
+		top: clamp(16px, 3vw, 36px);
+		right: clamp(44px, 6vw, 88px);
+		margin: 0;
+		font-family: var(--sans);
+		font-weight: 600;
+		font-size: clamp(72px, 13vw, 190px);
+		line-height: 1;
+		letter-spacing: -0.03em;
+		font-variant-numeric: tabular-nums;
+		text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+	}
+	.caption { left: clamp(20px, 3.5vw, 44px); right: clamp(44px, 6vw, 88px); bottom: clamp(20px, 3.5vw, 40px); max-width: 560px; }
+	.range { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-hi); }
+	.caption h3 { margin-top: 8px; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; }
+	.caption p { margin: 10px 0 0; font-size: 17px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+	/* Vertical page dots, like the lock screen's. The current one stretches into a pill. */
+	.dots { top: 50%; right: clamp(14px, 2vw, 24px); transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; }
+	.dots button {
+		width: 7px;
+		height: 7px;
+		padding: 0;
+		border: 0;
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.45);
+		cursor: pointer;
+	}
+	.dots .on { height: 22px; background: #fff; }
+	@media (max-width: 560px) {
+		.moment { padding: 80px 12px 12px; }
+		.frame { border-radius: 18px; }
+		.clock { right: 36px; }
+		.caption { right: 36px; }
+		.caption p { font-size: 15px; }
 	}
 </style>

@@ -105,6 +105,23 @@ content:
           - { name: long, label: Longer description (Our Camp page only), type: text, required: true }
           - { name: image, label: Photo, type: image }
           - { name: slide_image, label: Our Camp photo, type: image, description: Optional. A different photo for the slideshow here; leave empty to use the one above. }
+      - name: day
+        label: A day at camp
+        type: object
+        fields:
+          - { name: eyebrow, label: Small label, type: string, required: true }
+          - { name: title, label: Heading, type: string, required: true }
+          - name: moments
+            label: Moments
+            description: In order through the day. Each one fills the screen as visitors scroll.
+            type: object
+            list: { min: 1 }
+            fields:
+              - { name: time, label: Big clock time, type: string, required: true, description: 'e.g. "9:00"' }
+              - { name: range, label: Small time label, type: string, required: true, description: 'e.g. "9–10 AM" or "After dinner"' }
+              - { name: title, label: Title, type: string, required: true }
+              - { name: text, label: Extra line (optional), type: text }
+              - { name: photo, label: Photo, type: image, description: Landscape works best. Keep people near the middle; phones crop the sides. }
 
   - name: about
     label: About Us

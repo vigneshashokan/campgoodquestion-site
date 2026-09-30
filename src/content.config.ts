@@ -62,6 +62,19 @@ export const collections = {
 					}),
 				)
 				.min(1),
+			day: section.extend({
+				moments: z
+					.array(
+						z.object({
+							time: z.string(),
+							range: z.string(),
+							title: z.string(),
+							text: optional,
+							photo: optional,
+						}),
+					)
+					.min(1),
+			}),
 		}),
 	),
 	about: single(
