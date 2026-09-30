@@ -8,6 +8,8 @@ const camp = (await getEntry('camp', 'camp'))!.data;
 const settings = (await getEntry('settings', 'settings'))!.data;
 const { header, rituals_eyebrow, rituals, day } = camp;
 
+// "9:00 AM" → ["9:00", "AM"], so AM/PM can sit smaller beside the big numbers.
+const splitTime = (t: string) => t.match(/^(.*?)\s*([AP]M)?$/i)!.slice(1);
 const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 const arrow = (points: string) =>
 	`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="${points}"></polyline></svg>`;
@@ -72,7 +74,10 @@ const arrow = (points: string) =>
 							day.moments.map((m, i) => (
 								<li class="moment" data-state={i === 0 ? 'current' : 'after'}>
 									{m.photo && <img src={url(m.photo)} alt="" loading="lazy" />}
-									<p class="clock" aria-hidden="true">{m.time}</p>
+									<p class="clock" aria-hidden="true">
+										{splitTime(m.time)[0]}
+										{splitTime(m.time)[1] && <span class="ampm">{splitTime(m.time)[1]}</span>}
+									</p>
 									<div class="caption">
 										<span class="range">{m.range}</span>
 										<h3>{m.title}</h3>
@@ -249,9 +254,9 @@ const arrow = (points: string) =>
 	.day-track { height: 100svh; }
 	.day-track[data-ready] { height: calc(var(--count) * 100svh); }
 	/* 92px keeps the frame clear of the sticky site header. The frame is a 3:2 landscape at about
-	   three quarters of the screen's height, centered in the space below the header. */
+	   four fifths of the screen's height, centered in the space below the header. */
 	.day-stage { position: sticky; top: 0; height: 100svh; padding: 92px var(--gutter) 20px; display: grid; place-items: center; }
-	.frame { position: relative; width: min(100%, 72svh * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
+	.frame { position: relative; width: min(100%, 79svh * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
 	.moments { list-style: none; margin: 0; padding: 0; }
 	.moment {
 		position: absolute;
@@ -287,6 +292,7 @@ const arrow = (points: string) =>
 		letter-spacing: -0.01em;
 		text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
 	}
+	.ampm { margin-left: 0.12em; font-size: 0.3em; letter-spacing: 0.02em; }
 	.caption { right: clamp(44px, 6vw, 88px); bottom: clamp(20px, 3.5vw, 40px); max-width: 560px; }
 	.range { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-hi); }
 	.caption h3 { margin-top: 8px; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; }
@@ -308,7 +314,7 @@ const arrow = (points: string) =>
 	@media (max-width: 560px) {
 		/* Phones are portrait, so the frame goes full width and a bit shorter than the screen instead. */
 		.day-stage { padding: 80px 12px 12px; }
-		.frame { width: 100%; aspect-ratio: auto; height: 72svh; border-radius: 18px; }
+		.frame { width: 100%; aspect-ratio: auto; height: 79svh; border-radius: 18px; }
 		.caption { right: 36px; }
 		.caption p { font-size: 15px; }
 	}

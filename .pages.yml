@@ -117,7 +117,7 @@ content:
             type: object
             list: { min: 1 }
             fields:
-              - { name: time, label: Big clock time, type: string, required: true, description: 'e.g. "9:00"' }
+              - { name: time, label: Big clock time, type: string, required: true, description: 'e.g. "9:00 AM". AM/PM shows smaller.' }
               - { name: range, label: Small time label, type: string, required: true, description: 'e.g. "9–10 AM" or "After dinner"' }
               - { name: title, label: Title, type: string, required: true }
               - { name: text, label: Extra line (optional), type: text }

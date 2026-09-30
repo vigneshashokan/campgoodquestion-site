@@ -26,32 +26,32 @@ day:
   eyebrow: A day at camp
   title: From first stretch to wherever the night goes.
   moments:
-    - time: "9:00"
+    - time: "9:00 AM"
       range: 9–10 AM
       title: Slow flow yoga
       photo: /images/history-2019.jpg
-    - time: "10:00"
+    - time: "10:00 AM"
       range: 10–11 AM
       title: Breakfast
       photo: /images/camp-build.jpg
-    - time: "11:00"
+    - time: "11:00 AM"
       range: 11 AM–12 PM
       title: Breakfast crew cleanup
       photo: /images/camp-strike.jpg
-    - time: "12:00"
+    - time: "12:00 PM"
       range: 12–3 PM
       title: Tea time
       text: Plus dosas on Tuesdays and Thursdays.
       photo: /images/tea-ceremony-camp.jpg
-    - time: "4:00"
+    - time: "4:00 PM"
       range: 4–6 PM
       title: Showers open
       photo: /images/history-2023.jpg
-    - time: "7:00"
+    - time: "7:00 PM"
       range: 7–8 PM
       title: Dinner
       photo: /images/dosa-days-camp.jpg
-    - time: "8:00"
+    - time: "8:00 PM"
       range: After dinner
       title: The night is yours
       text: "We plan the night together. You're free to join us, or explore on your own or with your crew."
