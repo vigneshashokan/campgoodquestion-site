@@ -73,7 +73,13 @@ const arrow = (points: string) =>
 						{
 							day.moments.map((m, i) => (
 								<li class="moment" data-state={i === 0 ? 'current' : 'after'}>
-									{m.photo && <img src={url(m.photo)} alt="" loading="lazy" />}
+									{m.photos?.length ? (
+										<div class="collage">
+											{m.photos.map((src) => <img src={url(src)} alt="" loading="lazy" />)}
+										</div>
+									) : (
+										m.photo && <img src={url(m.photo)} alt="" loading="lazy" />
+									)}
 									<p class="clock" aria-hidden="true">
 										{splitTime(m.time)[0]}
 										{splitTime(m.time)[1] && <span class="ampm">{splitTime(m.time)[1]}</span>}
@@ -281,7 +287,13 @@ const arrow = (points: string) =>
 	@media (prefers-reduced-motion: reduce) {
 		.moment { transition: none; }
 	}
-	.moment img { position: absolute; inset: 0; }
+	.moment > img { position: absolute; inset: 0; }
+	/* A moment with several photos shows them as a grid: 3 across on wide screens, 2 across on upright ones. */
+	.collage { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 3px; background: var(--bg); }
+	.collage img { min-height: 0; }
+	@media (orientation: portrait) {
+		.collage { grid-template-columns: repeat(2, 1fr); }
+	}
 	/* Soft shade down the left side, where all the text sits, so it reads on bright playa sky. */
 	.moment::after {
 		content: '';

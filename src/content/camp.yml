@@ -51,4 +51,10 @@ day:
       range: After dinner
       title: The night is yours
       text: "We plan the night together. You're free to join us, or explore on your own or with your crew."
-      photo: /images/history-2024.jpg
+      photos:
+        - /images/night-1.jpg
+        - /images/night-2.jpg
+        - /images/night-3.jpg
+        - /images/night-4.jpg
+        - /images/night-5.jpg
+        - /images/night-6.jpg

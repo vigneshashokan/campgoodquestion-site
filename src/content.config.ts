@@ -71,6 +71,7 @@ export const collections = {
 							title: z.string(),
 							text: optional,
 							photo: optional,
+							photos: z.array(z.string()).nullish(),
 						}),
 					)
 					.min(1),

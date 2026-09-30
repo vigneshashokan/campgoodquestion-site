@@ -122,6 +122,7 @@ content:
               - { name: title, label: Title, type: string, required: true }
               - { name: text, label: Extra line (optional), type: text }
               - { name: photo, label: Photo, type: image, description: Landscape works best. Keep people near the middle; phones crop the sides. }
+              - { name: photos, label: Collage photos (optional), type: image, list: true, description: Add several to show a collage instead of the single photo. Six fills the grid best. }
 
   - name: about
     label: About Us
