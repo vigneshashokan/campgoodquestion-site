@@ -75,7 +75,11 @@ const arrow = (points: string) =>
 								<li class="moment" data-state={i === 0 ? 'current' : 'after'}>
 									{m.photos?.length ? (
 										<div class="collage">
-											{m.photos.map((src) => <img src={url(src)} alt="" loading="lazy" />)}
+											{m.photos.map((src) => (
+												<span>
+													<img src={url(src)} alt="" loading="lazy" />
+												</span>
+											))}
 										</div>
 									) : (
 										m.photo && <img src={url(m.photo)} alt="" loading="lazy" />
@@ -167,6 +171,7 @@ const arrow = (points: string) =>
 			dots.forEach((d, j) => d.classList.toggle('on', j === i));
 		};
 		const update = () => {
+			if (!step()) return; // upright screens stack the moments instead (no spacer)
 			const i = Math.round(-track.getBoundingClientRect().top / step());
 			show(Math.max(0, Math.min(moments.length - 1, i)));
 		};
@@ -178,6 +183,19 @@ const arrow = (points: string) =>
 		}, { passive: true });
 		track.dataset.ready = ''; // shows the spacer, so there's room to scroll through every moment
 		update();
+
+		// Upright screens center the slide in a full-screen stage, which leaves empty space above it until it
+		// pins. Pull the track up under the heading by that much, so the first time sits just below it.
+		const heading = document.querySelector<HTMLElement>('.day-head')!;
+		const tuck = () => {
+			track.style.removeProperty('--lead');
+			if (!matchMedia('(orientation: portrait)').matches) return;
+			const clock = moments[0].querySelector<HTMLElement>('.clock')!;
+			const lead = clock.getBoundingClientRect().top - heading.getBoundingClientRect().bottom - 16;
+			track.style.setProperty('--lead', `${Math.max(0, lead)}px`);
+		};
+		tuck();
+		addEventListener('resize', tuck);
 
 		track.addEventListener('click', (e) => {
 			const b = (e.target as Element).closest<HTMLElement>('[data-jump]');
@@ -258,7 +276,7 @@ const arrow = (points: string) =>
 		.arrow { width: 44px; height: 44px; }
 	}
 	/* --pin-top keeps the frame clear of the sticky site header once pinned. --gap is the space above the first
-	   photo (under the heading) and below the last (at the page's end). The frame fills the screen between them. */
+	   photo (under the heading) and below the last (at the page's end). The 3:2 frame fills the screen between them. */
 	.day {
 		--pin-top: 92px;
 		--gap: calc(var(--pin-top) - 40px);
@@ -272,9 +290,8 @@ const arrow = (points: string) =>
 	/* Without JS there's no spacer, and the section is just the first moment. */
 	.day-steps { display: none; }
 	.day-track[data-ready] .day-steps { display: block; height: calc((var(--count) - 1) * 100svh); }
-	/* Never wider than 3:2, so on wide screens it stays a framed photo rather than filling the page. */
 	.day-stage { position: sticky; top: 0; padding: var(--pin-top) var(--gutter) 0; display: grid; justify-items: center; }
-	.frame { position: relative; width: min(100%, var(--frame-h) * 1.5); height: var(--frame-h); border-radius: 24px; container-type: inline-size; }
+	.frame { position: relative; width: min(100%, var(--frame-h) * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
 	.moments { list-style: none; margin: 0; padding: 0; }
 	.moment {
 		position: absolute;
@@ -288,12 +305,11 @@ const arrow = (points: string) =>
 		.moment { transition: none; }
 	}
 	.moment > img { position: absolute; inset: 0; }
-	/* A moment with several photos shows them as a grid: 3 across on wide screens, 2 across on upright ones. */
+	/* A moment with several photos shows them as a 3-across grid. Each photo fills its cell absolutely:
+	   Safari sizes an <img> grid item by the photo instead of the cell. */
 	.collage { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 3px; background: var(--bg); }
-	.collage img { min-height: 0; }
-	@media (orientation: portrait) {
-		.collage { grid-template-columns: repeat(2, 1fr); }
-	}
+	.collage > span { position: relative; overflow: hidden; }
+	.collage img { position: absolute; inset: 0; }
 	/* Soft shade down the left side, where all the text sits, so it reads on bright playa sky. */
 	.moment::after {
 		content: '';
@@ -304,25 +320,26 @@ const arrow = (points: string) =>
 			linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent 35%);
 		pointer-events: none;
 	}
-	/* Time and caption share the left side; the dots have the right to themselves. */
+	/* Time and caption share the left side; the dots have the right to themselves.
+	   Sizes follow the frame's width (cqi), so a phone's small frame gets small text. */
 	.clock, .caption, .dots { position: absolute; z-index: 1; color: #fff; }
-	.clock, .caption { left: clamp(20px, 3.5vw, 44px); }
+	.clock, .caption { left: clamp(14px, 4cqi, 44px); }
 	.clock {
-		top: clamp(16px, 3vw, 36px);
+		top: clamp(10px, 3cqi, 36px);
 		margin: 0;
 		font-family: var(--serif);
-		font-size: clamp(64px, 15cqi, 180px);
+		font-size: clamp(40px, 15cqi, 180px);
 		line-height: 1;
 		letter-spacing: -0.01em;
 		text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
 	}
 	.ampm { margin-left: 0.12em; font-size: 0.3em; letter-spacing: 0.02em; }
-	.caption { right: clamp(44px, 6vw, 88px); bottom: clamp(20px, 3.5vw, 40px); max-width: 560px; }
-	.range { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-hi); }
-	.caption h3 { margin-top: 8px; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; }
-	.caption p { margin: 10px 0 0; font-size: 17px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+	.caption { right: clamp(32px, 7cqi, 88px); bottom: clamp(12px, 3.5cqi, 40px); max-width: 560px; }
+	.range { font-family: var(--mono); font-size: clamp(10px, 1.3cqi, 13px); letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-hi); }
+	.caption h3 { margin-top: clamp(4px, 0.8cqi, 8px); font-size: clamp(22px, 5cqi, 48px); line-height: 1.05; }
+	.caption p { margin: clamp(4px, 1cqi, 10px) 0 0; font-size: clamp(13px, 1.7cqi, 17px); line-height: 1.5; color: var(--ink); text-wrap: pretty; }
 	/* Vertical page dots, like the lock screen's. The current one stretches into a pill. */
-	.dots { top: 50%; right: clamp(14px, 2vw, 24px); transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; }
+	.dots { top: 50%; right: clamp(10px, 2cqi, 24px); transform: translateY(-50%); display: flex; flex-direction: column; gap: clamp(5px, 0.8cqi, 8px); }
 	.dots button {
 		width: 7px;
 		height: 7px;
@@ -335,12 +352,43 @@ const arrow = (points: string) =>
 		transition: height 0.3s ease, background-color 0.3s ease;
 	}
 	.dots .on { height: 22px; background: #fff; }
+	/* Upright screens: the whole screen is the slide, like a phone's lock screen. The time sits above the
+	   3:2 photo and the caption below it (a pinned landscape photo alone would leave most of the screen
+	   empty), and they swap together. Each step takes less scrolling. */
+	@media (orientation: portrait) {
+		.day-track { margin-top: calc(-48px - var(--lead, 0px)); margin-bottom: -72px; }
+		.day-track[data-ready] .day-steps { height: calc((var(--count) - 1) * 60svh); }
+		.day-stage { height: 100svh; padding-bottom: 28px; }
+		.frame { width: 100%; height: 100%; aspect-ratio: auto; border: 0; border-radius: 0; background: none; }
+		.moment {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: clamp(12px, 4cqi, 24px);
+		}
+		.moment::after { content: none; }
+		.moment > img,
+		.collage {
+			position: relative;
+			inset: auto;
+			width: 100%;
+			height: auto;
+			aspect-ratio: 3 / 2;
+			border-radius: 16px;
+			border: 1px solid var(--amber-line);
+		}
+		.collage { overflow: hidden; }
+		.clock, .caption { position: static; order: -1; text-shadow: none; }
+		.caption { order: 1; max-width: none; }
+		.clock { font-size: clamp(64px, 26cqi, 150px); }
+		.caption h3 { font-size: clamp(28px, 9cqi, 52px); }
+		.caption p { font-size: clamp(15px, 4.2cqi, 19px); color: var(--ink-2); }
+		.range { font-size: clamp(11px, 3.2cqi, 14px); }
+		/* Dots down the photo's right edge, as on wide screens. The photo sits at the screen's middle, where they do. */
+		.dots { right: 12px; }
+	}
 	@media (max-width: 560px) {
-		/* Phones are portrait, so the frame goes full width and a bit shorter than the screen instead. */
 		.day { --pin-top: 80px; }
 		.day-stage { padding-inline: 12px; }
-		.frame { border-radius: 18px; }
-		.caption { right: 36px; }
-		.caption p { font-size: 15px; }
 	}
 </style>
