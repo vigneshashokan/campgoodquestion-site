@@ -354,7 +354,7 @@ const arrow = (points: string) =>
 	.dots .on { height: 22px; background: #fff; }
 	/* Upright screens: the whole screen is the slide, like a phone's lock screen. The time sits above the
 	   3:2 photo and the caption below it (a pinned landscape photo alone would leave most of the screen
-	   empty), they swap together, and the dots run along the bottom. Each step takes less scrolling. */
+	   empty), and they swap together. Each step takes less scrolling. */
 	@media (orientation: portrait) {
 		.day-track { margin-top: calc(-48px - var(--lead, 0px)); margin-bottom: -72px; }
 		.day-track[data-ready] .day-steps { height: calc((var(--count) - 1) * 60svh); }
@@ -384,8 +384,8 @@ const arrow = (points: string) =>
 		.caption h3 { font-size: clamp(28px, 9cqi, 52px); }
 		.caption p { font-size: clamp(15px, 4.2cqi, 19px); color: var(--ink-2); }
 		.range { font-size: clamp(11px, 3.2cqi, 14px); }
-		.dots { top: auto; bottom: 0; right: auto; left: 50%; transform: translateX(-50%); flex-direction: row; gap: 8px; }
-		.dots .on { width: 22px; height: 7px; }
+		/* Dots down the photo's right edge, as on wide screens. The photo sits at the screen's middle, where they do. */
+		.dots { right: 12px; }
 	}
 	@media (max-width: 560px) {
 		.day { --pin-top: 80px; }
