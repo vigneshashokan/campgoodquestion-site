@@ -33,7 +33,7 @@ day:
     - time: "10:00 AM"
       range: 10–11 AM
       title: Breakfast
-      photo: /images/camp-build.jpg
+      photo: /images/day-breakfast.jpg
     - time: "12:00 PM"
       range: 12–3 PM
       title: Tea time
@@ -46,7 +46,7 @@ day:
     - time: "7:00 PM"
       range: 7–8 PM
       title: Dinner
-      photo: /images/dosa-days-camp.jpg
+      photo: /images/day-dinner.jpg
     - time: "8:00 PM"
       range: After dinner
       title: The night is yours
