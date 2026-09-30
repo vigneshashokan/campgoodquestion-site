@@ -4,7 +4,7 @@ import { z } from 'astro/zod';
 
 // Each page's content is one YAML file in src/content/, edited through Pages CMS.
 // Keep these schemas in sync with the fields in .pages.yml. A schema mismatch fails
-// the build, so a bad edit never reaches the live site (Netlify keeps the last good deploy).
+// the build, so a bad edit never reaches the live site (the host keeps the last good deploy).
 
 const single = <T extends z.ZodType>(name: string, schema: T) =>
 	defineCollection({ loader: glob({ pattern: `${name}.yml`, base: './src/content' }), schema });
