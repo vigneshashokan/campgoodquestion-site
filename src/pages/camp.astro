@@ -227,20 +227,21 @@ const arrow = (points: string) =>
 	}
 	.frame { position: relative; height: 100%; border-radius: 24px; box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45); }
 	.frame img { position: absolute; inset: 0; }
-	/* Soft shade in the top-right and bottom-left corners so the white text reads on bright playa sky. */
+	/* Soft shade down the left side, where all the text sits, so it reads on bright playa sky. */
 	.frame::after {
 		content: '';
 		position: absolute;
 		inset: 0;
 		background:
-			radial-gradient(ellipse 60% 55% at 100% 0%, rgba(0, 0, 0, 0.45), transparent 70%),
-			linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 45%);
+			linear-gradient(to right, rgba(0, 0, 0, 0.5), transparent 60%),
+			linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent 35%);
 		pointer-events: none;
 	}
+	/* Time and caption share the left side; the dots have the right to themselves. */
 	.clock, .caption, .dots { position: absolute; z-index: 1; color: #fff; }
+	.clock, .caption { left: clamp(20px, 3.5vw, 44px); }
 	.clock {
 		top: clamp(16px, 3vw, 36px);
-		right: clamp(44px, 6vw, 88px);
 		margin: 0;
 		font-family: var(--serif);
 		font-size: clamp(72px, 13vw, 190px);
@@ -248,7 +249,7 @@ const arrow = (points: string) =>
 		letter-spacing: -0.01em;
 		text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
 	}
-	.caption { left: clamp(20px, 3.5vw, 44px); right: clamp(44px, 6vw, 88px); bottom: clamp(20px, 3.5vw, 40px); max-width: 560px; }
+	.caption { right: clamp(44px, 6vw, 88px); bottom: clamp(20px, 3.5vw, 40px); max-width: 560px; }
 	.range { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-hi); }
 	.caption h3 { margin-top: 8px; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; }
 	.caption p { margin: 10px 0 0; font-size: 17px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
@@ -267,7 +268,6 @@ const arrow = (points: string) =>
 	@media (max-width: 560px) {
 		.moment { padding: 80px 12px 12px; }
 		.frame { border-radius: 18px; }
-		.clock { right: 36px; }
 		.caption { right: 36px; }
 		.caption p { font-size: 15px; }
 	}
