@@ -77,12 +77,12 @@ const arrow = (points: string) =>
 										<div class="collage">
 											{m.photos.map((src) => (
 												<span>
-													<img src={url(src)} alt="" loading="lazy" />
+													<img src={url(src)} alt="" loading="lazy" decoding="async" />
 												</span>
 											))}
 										</div>
 									) : (
-										m.photo && <img src={url(m.photo)} alt="" loading="lazy" />
+										m.photo && <img src={url(m.photo)} alt="" loading="lazy" decoding="async" />
 									)}
 									<p class="clock" aria-hidden="true">
 										{splitTime(m.time)[0]}
@@ -226,9 +226,38 @@ const arrow = (points: string) =>
 			queued = true;
 			requestAnimationFrame(() => ((queued = false), onScroll()));
 		}, { passive: true });
-		addEventListener('touchstart', () => (touching = true), { passive: true });
+		// A new swipe counts even while the last one is still coasting: a finger going down, or a wheel/trackpad
+		// burst that suddenly picks up speed (coasting only ever slows down).
+		const newSwipe = () => {
+			settling = false;
+			anchor = progress();
+			from = null;
+		};
+		addEventListener('touchstart', () => ((touching = true), newSwipe()), { passive: true });
+		// Wheel: a burst's speed rises to a peak and then coasts down. Once it has slowed to under half its peak,
+		// a clear pick-up in speed is a new swipe. Only while coasting: at rest, the browser may already have
+		// scrolled by the time this runs, and the rest position is the right starting point anyway.
+		let peak = 0;
+		let low = 0;
+		let lastWheelAt = 0;
+		addEventListener('wheel', (e) => {
+			const d = Math.abs(e.deltaY);
+			const now = performance.now();
+			const fresh = now - lastWheelAt > 250;
+			lastWheelAt = now;
+			if (from !== null && !settling && (fresh || (low < peak / 2 && d > Math.max(8, low * 2.5)))) newSwipe();
+			if (fresh || from === null || d > peak) (peak = d), (low = d);
+			else low = Math.min(low, d);
+		}, { passive: true });
 		addEventListener('touchend', () => (touching = false), { passive: true });
 		addEventListener('touchcancel', () => (touching = false), { passive: true });
+		// The photos wait off-screen, below the frame's edge, until they slide in. Safari only loads a lazy
+		// image once it's visible, so it would pop in mid-slide: load them all as the section comes near.
+		new IntersectionObserver((entries, io) => {
+			if (!entries[0].isIntersecting) return;
+			track.querySelectorAll('img').forEach((img) => (img.loading = 'eager'));
+			io.disconnect();
+		}, { rootMargin: '100% 0px' }).observe(track);
 		track.dataset.ready = ''; // shows the spacer, so there's room to scroll through every moment
 		show(clamp(Math.round(progress())));
 
