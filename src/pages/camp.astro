@@ -190,6 +190,15 @@ const arrow = (points: string) =>
 			anchor = i;
 			scrollTo({ top: track.getBoundingClientRect().top + scrollY + i * step(), behavior: smooth() });
 		};
+		// Our easing scroll has stopped. Something may have overridden it (Firefox keeps a trackpad swipe
+		// coasting, or the scroll bar was dragged), so make the moment match where the page actually rests.
+		const settled = () => {
+			settling = false;
+			const p = progress();
+			anchor = p;
+			show(clamp(Math.round(p)));
+			if (p > -0.01 && p < last + 0.01 && Math.abs(p - current) > 0.02) goTo(current);
+		};
 		const settle = () => {
 			if (touching) return void (rest = window.setTimeout(settle, 150));
 			const p = progress();
@@ -224,7 +233,7 @@ const arrow = (points: string) =>
 			if (settling) {
 				// Our easing scroll: done once it stops moving.
 				clearTimeout(rest);
-				rest = window.setTimeout(() => (settling = false), 120);
+				rest = window.setTimeout(settled, 120);
 				return;
 			}
 			if (queued) return;
