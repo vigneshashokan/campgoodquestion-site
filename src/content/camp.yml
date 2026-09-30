@@ -39,10 +39,6 @@ day:
       title: Tea time
       text: Plus dosas on Tuesdays and Thursdays.
       photo: /images/day-tea.jpg
-    - time: "4:00 PM"
-      range: 4–6 PM
-      title: Showers open
-      photo: /images/history-2023.jpg
     - time: "7:00 PM"
       range: 7–8 PM
       title: Dinner
