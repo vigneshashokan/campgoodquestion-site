@@ -93,6 +93,8 @@ const arrow = (points: string) =>
 					</div>
 				</div>
 			</div>
+			{/* Invisible: one screen of scrolling per moment after the first, while the stage stays pinned. */}
+			<div class="day-steps" />
 		</div>
 	</section>
 </Base>
@@ -149,7 +151,8 @@ const arrow = (points: string) =>
 	if (track) {
 		const moments = [...track.querySelectorAll<HTMLElement>('.moment')];
 		const dots = [...track.querySelectorAll<HTMLElement>('[data-jump]')];
-		const step = () => track.querySelector<HTMLElement>('.day-stage')!.offsetHeight;
+		const steps = track.querySelector<HTMLElement>('.day-steps')!;
+		const step = () => steps.offsetHeight / Math.max(1, moments.length - 1);
 		let current = 0;
 		const show = (i: number) => {
 			if (i === current) return;
@@ -167,7 +170,7 @@ const arrow = (points: string) =>
 			queued = true;
 			requestAnimationFrame(() => ((queued = false), update()));
 		}, { passive: true });
-		track.dataset.ready = ''; // makes the track tall enough to scroll through every moment
+		track.dataset.ready = ''; // shows the spacer, so there's room to scroll through every moment
 		update();
 
 		track.addEventListener('click', (e) => {
@@ -248,16 +251,24 @@ const arrow = (points: string) =>
 		.slide .body { font-size: 14px; line-height: 1.55; }
 		.arrow { width: 44px; height: 44px; }
 	}
+	/* --pin-top keeps the frame clear of the sticky site header once pinned. --gap is the space above the first
+	   photo (under the heading) and below the last (at the page's end). The frame fills the screen between them. */
+	.day {
+		--pin-top: 92px;
+		--gap: calc(var(--pin-top) - 40px);
+		--frame-h: calc(100svh - var(--pin-top) - var(--gap));
+	}
 	.day-head { padding: clamp(72px, 9vw, 100px) var(--gutter) 8px; }
 	.day-head .h2 { max-width: 720px; text-wrap: balance; }
-	/* Without JS the track is one screen tall and shows the first moment. */
-	/* Pulled up under the heading: the stage's top padding is only there to clear the site header once pinned. */
-	.day-track { height: 100svh; margin-top: -48px; }
-	.day-track[data-ready] { height: calc(var(--count) * 100svh); }
-	/* 92px keeps the frame clear of the sticky site header. The frame is a 3:2 landscape at about
-	   four fifths of the screen's height, just under the header. */
-	.day-stage { position: sticky; top: 0; height: 100svh; padding: 92px var(--gutter) 20px; display: grid; justify-items: center; align-items: start; }
-	.frame { position: relative; width: min(100%, 79svh * 1.5); aspect-ratio: 3 / 2; border-radius: 24px; container-type: inline-size; }
+	/* The stage's top padding is only there to clear the site header once pinned, so the track tucks up under
+	   the heading (8px heading padding + --pin-top - 48px = --gap), and the page's 72px bottom space shrinks to --gap. */
+	.day-track { margin-top: -48px; margin-bottom: calc(var(--gap) - 72px); }
+	/* Without JS there's no spacer, and the section is just the first moment. */
+	.day-steps { display: none; }
+	.day-track[data-ready] .day-steps { display: block; height: calc((var(--count) - 1) * 100svh); }
+	/* Never wider than 3:2, so on wide screens it stays a framed photo rather than filling the page. */
+	.day-stage { position: sticky; top: 0; padding: var(--pin-top) var(--gutter) 0; display: grid; justify-items: center; }
+	.frame { position: relative; width: min(100%, var(--frame-h) * 1.5); height: var(--frame-h); border-radius: 24px; container-type: inline-size; }
 	.moments { list-style: none; margin: 0; padding: 0; }
 	.moment {
 		position: absolute;
@@ -314,8 +325,9 @@ const arrow = (points: string) =>
 	.dots .on { height: 22px; background: #fff; }
 	@media (max-width: 560px) {
 		/* Phones are portrait, so the frame goes full width and a bit shorter than the screen instead. */
-		.day-stage { padding: 80px 12px 12px; }
-		.frame { width: 100%; aspect-ratio: auto; height: 79svh; border-radius: 18px; }
+		.day { --pin-top: 80px; }
+		.day-stage { padding-inline: 12px; }
+		.frame { border-radius: 18px; }
 		.caption { right: 36px; }
 		.caption p { font-size: 15px; }
 	}
